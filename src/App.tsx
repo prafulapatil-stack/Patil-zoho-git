@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'motion/react';
 import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldAlert, ChevronDown, BarChart3, PieChart, Users, ShieldCheck, Compass, Route, LineChart, Linkedin, Twitter, Facebook, Star } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import { Analytics } from '@vercel/analytics/react';
 
 const AnimatedCounter = ({ from, to }: { from: number, to: number }) => {
   const count = useMotionValue(from);
@@ -613,6 +614,7 @@ export default function App() {
           </motion.div>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
