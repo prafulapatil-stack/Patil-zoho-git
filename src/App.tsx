@@ -5,8 +5,116 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'motion/react';
-import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldAlert, ChevronDown, BarChart3, PieChart, Users, ShieldCheck, Compass, Route, LineChart, Linkedin, Twitter, Facebook, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldAlert, ChevronDown, BarChart3, PieChart, Users, ShieldCheck, Compass, Route, LineChart, Linkedin, Instagram, Facebook, Star, X, Calculator, LogIn } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+
+const WhatsAppIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+  </svg>
+);
+
+const PHASE_DATA = [
+  {
+    id: "builder",
+    badge: "For Professionals Aged 30–45",
+    titlePrefix: "Accelerate Your",
+    titleHighlight: "Wealth Creation",
+    description: "Focus on aggressive growth, SIPs, and compounding. Build a massive corpus to secure your financial independence early.",
+    chartTitle: "Wealth Accumulation",
+    chartData: [5, 8, 12, 18, 26, 38, 52, 70, 85, 100],
+    steps: [
+      { step: "01", title: "Goal Sheet Review", desc: "We analyze your current cash flow and identify surplus for wealth creation.", icon: Compass },
+      { step: "02", title: "Growth-Oriented SIPs", desc: "Set up automated mutual fund SIPs aligned with your timeline.", icon: Route },
+      { step: "03", title: "Portfolio Review", desc: "Annual rebalancing to ensure you stay on the path to your goals.", icon: LineChart }
+    ],
+    leadMagnet: {
+      title: "Want to Fast-Track Your Wealth?",
+      desc: "Download our free Wealth Accumulation Goal Sheet to discover the power of compounding and consistent SIP strategies.",
+      buttonText: "Get the Goal Sheet",
+      pdfTitle: "WEALTH ACCUMULATION",
+      pdfSubtitle: "GOAL SHEET",
+      points: [
+        "Have you calculated your exact 'Retirement Confidence' number?",
+        "Are you saving at least 20-30% of your monthly income?",
+        "Is your portfolio heavily weighted towards high-growth equity funds?",
+        "Do you have an emergency fund covering 6 months of expenses?",
+        "Have you automated your investments via SIPs to avoid emotional decisions?",
+        "Are you maximizing your tax-saving investment options (ELSS, etc.)?",
+        "Do you have adequate term life and health insurance coverage?",
+        "Are you avoiding high-interest consumer debt?",
+        "Do you increase your SIP amount annually in line with your salary hikes?",
+        "Do you review your portfolio performance with a professional annually?"
+      ]
+    }
+  },
+  {
+    id: "transitioner",
+    badge: "For Professionals Aged 50+",
+    titlePrefix: "Build Your",
+    titleHighlight: "Retirement Bridge",
+    description: "Move from financial uncertainty to retirement confidence. We help you create a clear Investment Roadmap for lifestyle continuity.",
+    chartTitle: "Live Projection",
+    chartData: [30, 45, 40, 60, 55, 75, 70, 90, 85, 100],
+    steps: [
+      { step: "01", title: "Discovery Call", desc: "We identify the gap between your current standing and your retirement goals.", icon: Compass },
+      { step: "02", title: "Custom Roadmap", desc: "Receive your personalized Bridge Strategy and Goal Sheet.", icon: Route },
+      { step: "03", title: "Invest & Track", desc: "Execute through our portal and track your progress as a consistent performer.", icon: LineChart }
+    ],
+    leadMagnet: {
+      title: "Are You Ready for the Transition?",
+      desc: "Download our free 10-Point Retirement Readiness Checklist to see if your current strategy bridges the gap.",
+      buttonText: "Get the Free Checklist",
+      pdfTitle: "RETIREMENT READINESS",
+      pdfSubtitle: "CHECKLIST",
+      points: [
+        "Have you calculated your exact 'Retirement Gap' based on your desired lifestyle?",
+        "Is your current portfolio diversified enough to withstand market volatility?",
+        "Do you have a clear Systematic Withdrawal Plan (SWP) for monthly cash flow?",
+        "Have you accounted for inflation (especially healthcare) in your projections?",
+        "Are your investments aligned with your risk tolerance as you approach retirement?",
+        "Do you have an adequate emergency fund separate from your retirement corpus?",
+        "Have you consolidated your investments for easier tracking and management?",
+        "Is your portfolio tax-optimized for the withdrawal phase?",
+        "Have you planned for estate transition and nominated beneficiaries?",
+        "Do you review your 'Goal Sheet' with a professional at least once a year?"
+      ]
+    }
+  },
+  {
+    id: "liver",
+    badge: "For Retirees Aged 60+",
+    titlePrefix: "Secure Your",
+    titleHighlight: "Lifestyle Continuity",
+    description: "Transition from accumulating wealth to generating a reliable, tax-efficient monthly income through Systematic Withdrawal Plans (SWPs).",
+    chartTitle: "Sustainable SWP Cashflow",
+    chartData: [90, 88, 92, 89, 95, 91, 98, 94, 100, 96],
+    steps: [
+      { step: "01", title: "Income Analysis", desc: "We calculate your exact monthly lifestyle expenses and inflation impact.", icon: Compass },
+      { step: "02", title: "SWP Setup", desc: "Structure a tax-efficient Systematic Withdrawal Plan from your corpus.", icon: Route },
+      { step: "03", title: "Capital Preservation", desc: "Monitor the withdrawal rate to ensure your corpus outlives you.", icon: LineChart }
+    ],
+    leadMagnet: {
+      title: "Need Reliable Monthly Income?",
+      desc: "Download our free SWP & Tax Optimization Guide to learn how to generate a paycheck from your portfolio.",
+      buttonText: "Get the SWP Guide",
+      pdfTitle: "SWP & TAX OPTIMIZATION",
+      pdfSubtitle: "GUIDE",
+      points: [
+        "Have you accurately mapped out your fixed and variable monthly expenses?",
+        "Is your withdrawal rate sustainable (typically 3-4% annually)?",
+        "Are you utilizing a 'bucket strategy' to protect against sequence of returns risk?",
+        "Is your SWP structured to minimize capital gains taxes?",
+        "Do you have a dedicated healthcare fund or comprehensive senior health insurance?",
+        "Are you avoiding withdrawing from equity funds during market downturns?",
+        "Have you simplified your portfolio to make management easier in retirement?",
+        "Is your estate plan (Will, nominations, trusts) fully updated and communicated?",
+        "Do you have a trusted contact listed on all your financial accounts?",
+        "Do you conduct a semi-annual review to adjust withdrawals for inflation?"
+      ]
+    }
+  }
+];
 
 const AnimatedCounter = ({ from, to }: { from: number, to: number }) => {
   const count = useMotionValue(from);
@@ -53,9 +161,64 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
 
 export default function App() {
   const [activePhase, setActivePhase] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [calcHeight, setCalcHeight] = useState(500);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'resize-iframe') {
+        setCalcHeight(event.data.height);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const activeData = PHASE_DATA[activePhase];
+
+  const handleLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // ZOHO CRM WEBHOOK INTEGRATION POINT
+      // Replace this URL with your actual Zoho CRM Webhook URL
+      /*
+      await fetch('YOUR_ZOHO_WEBHOOK_URL', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          leadSource: 'Website Lead Magnet',
+          phase: activeData.id
+        })
+      });
+      */
+      
+      // Simulate network request for now
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Trigger PDF Download
+      handleDownloadPDF();
+      
+      // Close modal and reset
+      setIsModalOpen(false);
+      setFormData({ name: '', email: '', phone: '' });
+      // Optional: Show success message
+      
+    } catch (error) {
+      console.error("Error submitting to Zoho:", error);
+      alert("There was an error processing your request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
+    const magnetData = activeData.leadMagnet;
     
     // Premium Header
     doc.setFillColor(17, 18, 20); // Near black background
@@ -64,30 +227,19 @@ export default function App() {
     doc.setTextColor(26, 171, 222); // Electric Blue
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
-    doc.text('RETIREMENT READINESS', 20, 20);
+    doc.text(magnetData.pdfTitle, 20, 20);
     
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont("helvetica", "normal");
-    doc.text('CHECKLIST', 125, 20);
+    doc.text(magnetData.pdfSubtitle, 20, 30);
 
     doc.setTextColor(180, 180, 180);
     doc.setFontSize(10);
-    doc.text('Patil Investments - Your Pathway to Confidence', 20, 30);
+    doc.text('Patil Investments - Your Pathway to Confidence', 120, 30);
     
     // Add points
-    const points = [
-      "Have you calculated your exact 'Retirement Gap' based on your desired lifestyle?",
-      "Is your current portfolio diversified enough to withstand market volatility?",
-      "Do you have a clear Systematic Withdrawal Plan (SWP) for monthly cash flow?",
-      "Have you accounted for inflation (especially healthcare) in your projections?",
-      "Are your investments aligned with your risk tolerance as you approach retirement?",
-      "Do you have an adequate emergency fund separate from your retirement corpus?",
-      "Have you consolidated your investments for easier tracking and management?",
-      "Is your portfolio tax-optimized for the withdrawal phase?",
-      "Have you planned for estate transition and nominated beneficiaries?",
-      "Do you review your 'Goal Sheet' with a professional at least once a year?"
-    ];
+    const points = magnetData.points;
     
     let y = 55;
     
@@ -170,18 +322,33 @@ export default function App() {
             </div>
           </div>
           <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-300">
-            <a href="#bridge" className="hover:text-[var(--color-electric-blue)] transition-colors">The Bridge</a>
+            <a href="#journey" className="hover:text-[var(--color-electric-blue)] transition-colors">Your Journey</a>
             <a href="#plan" className="hover:text-[var(--color-electric-blue)] transition-colors">3-Step Plan</a>
-            <a href="#checklist" className="hover:text-[var(--color-electric-blue)] transition-colors">Readiness Checklist</a>
+            <a href="#resources" className="hover:text-[var(--color-electric-blue)] transition-colors">Free Resources</a>
           </nav>
-          <button className="hidden md:flex items-center gap-2 bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white px-6 py-3 rounded-full text-sm font-bold transition-all shadow-[0_0_15px_rgba(26,171,222,0.3)] hover:shadow-[0_0_25px_rgba(26,171,222,0.5)] hover:-translate-y-0.5">
-            <PhoneCall className="w-4 h-4" /> Book Discovery Call
-          </button>
+          <div className="flex items-center gap-4">
+            <a 
+              href="https://login.patilinvestments.co.in/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 text-gray-300 hover:text-white text-sm font-medium transition-colors"
+            >
+              <LogIn className="w-4 h-4" /> Client Login
+            </a>
+            <a 
+              href="https://wa.me/919137776263" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)] hover:shadow-[0_0_25px_rgba(37,211,102,0.5)] hover:-translate-y-0.5"
+            >
+              <WhatsAppIcon className="w-5 h-5" /> WhatsApp Us
+            </a>
+          </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+      <section id="hero" className="relative pt-12 pb-16 md:pt-16 md:pb-24 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,171,222,0.15),transparent_50%)]" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -193,20 +360,23 @@ export default function App() {
               className="max-w-2xl"
             >
               <span className="inline-block py-1 px-3 rounded-full bg-[var(--color-card-tint)] text-[var(--color-electric-blue)] text-sm font-semibold mb-6 border border-[var(--color-electric-blue)]/20">
-                For Professionals Aged 50+
+                {activeData.badge}
               </span>
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-                Build Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-electric-blue)] to-blue-400">Retirement Bridge</span>
+                {activeData.titlePrefix} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-electric-blue)] to-blue-400">{activeData.titleHighlight}</span>
               </h1>
-              <p className="text-lg md:text-xl text-gray-400 mb-10 leading-relaxed">
-                Move from financial uncertainty to retirement confidence. We help you create a clear Investment Roadmap for lifestyle continuity.
+              <p className="text-lg md:text-xl text-gray-400 mb-10 leading-relaxed min-h-[80px]">
+                {activeData.description}
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <button className="w-full sm:w-auto bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white px-8 py-4 rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(26,171,222,0.3)] hover:shadow-[0_0_30px_rgba(26,171,222,0.5)]">
                   Start Your Roadmap <ArrowRight className="w-5 h-5" />
                 </button>
-                <button className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white px-8 py-4 rounded-full text-base font-semibold transition-all border border-white/10">
-                  Get the Checklist
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white px-8 py-4 rounded-full text-base font-semibold transition-all border border-white/10"
+                >
+                  {activeData.leadMagnet.buttonText}
                 </button>
               </div>
             </motion.div>
@@ -216,57 +386,66 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative mt-12 lg:mt-0"
+              className="relative mt-12 lg:mt-0 w-full"
             >
               <div className="absolute inset-0 bg-[var(--color-electric-blue)] blur-[120px] opacity-20 rounded-full" />
-              <div className="relative">
-                <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl aspect-[4/3] bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-                  {/* 
-                    ZOHO BACKGROUND IMAGE OPTION
-                    When you move to Zoho, uncomment the img tag below and replace the src with your Zoho-hosted image URL.
-                  */}
-                  {/* <img 
-                    src="YOUR_ZOHO_IMAGE_URL_HERE" 
-                    alt="Retirement Planning" 
-                    className="absolute inset-0 w-full h-full object-cover"
-                  /> */}
-                  
-                  <div className="text-gray-600 text-sm border border-gray-700/50 px-4 py-2 rounded-full bg-black/40 z-10">
-                    Image Space (Add via Zoho)
+              
+              {/* Main Hero Chart Card */}
+              <div className="relative bg-[var(--color-near-black)]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl w-full">
+                <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
                   </div>
-                  
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-near-black)] via-transparent to-transparent opacity-60 pointer-events-none" />
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-electric-blue)] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-electric-blue)]"></span>
+                    </span>
+                    <span className="text-xs text-[var(--color-electric-blue)] font-mono uppercase tracking-wider">{activeData.chartTitle}</span>
+                  </div>
                 </div>
 
-                {/* Floating Goal Sheet Projection Card */}
-                <div className="absolute -bottom-8 -left-8 bg-[var(--color-near-black)]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl w-80 hidden xl:block">
-                  <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-red-500" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                <div className="space-y-8">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <div className="text-sm text-gray-400 mb-2 font-medium">Projected Corpus</div>
+                      <div className="text-5xl md:text-6xl font-bold text-white tracking-tight">₹ <AnimatedCounter key={activePhase} from={0} to={10} /> Cr+</div>
                     </div>
-                    <span className="text-xs text-gray-500 font-mono">Goal Sheet Projection</span>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <div className="text-sm text-gray-400 mb-1">Projected Corpus</div>
-                        <div className="text-3xl font-bold text-white">₹ <AnimatedCounter from={0} to={10} /> Cr+</div>
-                      </div>
+                    <div className="hidden sm:flex bg-[var(--color-electric-blue)]/10 p-3 rounded-xl border border-[var(--color-electric-blue)]/20">
                       <TrendingUp className="w-8 h-8 text-[var(--color-electric-blue)]" />
                     </div>
-                    <div className="h-24 flex items-end gap-2">
-                      {[40, 55, 45, 70, 65, 85, 100].map((h, i) => (
-                        <motion.div 
-                          key={i}
-                          initial={{ height: 0 }}
-                          animate={{ height: `${h}%` }}
-                          transition={{ duration: 1, delay: 0.5 + (i * 0.1) }}
-                          className="flex-1 bg-gradient-to-t from-[var(--color-electric-blue)]/20 to-[var(--color-electric-blue)] rounded-t-sm opacity-80"
-                        />
-                      ))}
+                  </div>
+
+                  <div className="relative h-48 md:h-64 mt-8 border-b border-l border-white/10 pl-2 md:pl-4 pb-4 flex items-end gap-2 md:gap-3">
+                    {/* Grid lines */}
+                    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 ml-2 md:ml-4 mb-4">
+                      <div className="border-t border-white/20 w-full border-dashed" />
+                      <div className="border-t border-white/20 w-full border-dashed" />
+                      <div className="border-t border-white/20 w-full border-dashed" />
+                      <div className="border-t border-white/20 w-full border-dashed" />
                     </div>
+                    
+                    {/* Bars */}
+                    {activeData.chartData.map((h, i) => (
+                      <motion.div 
+                        key={`${activePhase}-${i}`}
+                        initial={{ height: 0, opacity: 0.3 }}
+                        animate={{ height: `${h}%`, opacity: 1 }}
+                        transition={{ duration: 1.2, delay: i * 0.08, type: "spring", bounce: 0.2 }}
+                        className="flex-1 bg-gradient-to-t from-[var(--color-electric-blue)]/20 to-[var(--color-electric-blue)] rounded-t-md relative group"
+                      >
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg">
+                          Year {i + 1}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500 font-mono px-2 md:px-4">
+                    <span>Today</span>
+                    <span>Year 5</span>
+                    <span>Retirement</span>
                   </div>
                 </div>
               </div>
@@ -275,8 +454,45 @@ export default function App() {
         </div>
       </section>
 
+      {/* Goal Calculator Section */}
+      <section id="zoho-calculator-link" className="py-16 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--color-electric-blue)]/5" />
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="max-w-5xl mx-auto"
+          >
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">Discover Your Target Corpus</h2>
+              <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                Use our interactive calculator to find out exactly how much you need to maintain your lifestyle. Your personalized report will be sent directly to your inbox.
+              </p>
+            </div>
+            
+            <div className="bg-[var(--color-near-black)] border border-white/10 rounded-3xl p-2 md:p-4 shadow-2xl relative overflow-hidden flex items-center justify-center transition-all duration-500">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-[var(--color-electric-blue)]/20 blur-[120px] rounded-full pointer-events-none" />
+              
+              <div 
+                className="relative w-full bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden transition-all duration-500"
+                style={{ height: `${calcHeight}px` }}
+              >
+                <iframe 
+                  src="/calculator.html" 
+                  title="Retirement Goal Calculator"
+                  className="absolute inset-0 w-full h-full border-0 z-20"
+                  style={{ backgroundColor: 'transparent' }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Pillars Section */}
-      <section id="bridge" className="py-24 bg-black/40 border-y border-white/5 relative overflow-hidden">
+      <section id="journey" className="py-24 bg-black/40 border-y border-white/5 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[500px] bg-[var(--color-electric-blue)]/10 blur-[120px] rounded-full pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div 
@@ -335,7 +551,10 @@ export default function App() {
               return (
                 <div 
                   key={i} 
-                  onClick={() => setActivePhase(i)}
+                  onClick={() => {
+                    setActivePhase(i);
+                    document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
                   className={`relative p-8 rounded-3xl border bg-[var(--color-near-black)] transition-all duration-500 cursor-pointer ${isActive ? `${pillar.activeGlow} z-10 scale-105 md:scale-110 ${pillar.border}` : 'opacity-50 hover:opacity-80 border-white/10 hover:border-white/20 scale-100'}`}
                 >
                   {isActive && (
@@ -374,28 +593,9 @@ export default function App() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                step: "01",
-                title: "Discovery Call",
-                desc: "We identify the gap between your current standing and your retirement goals.",
-                icon: Compass
-              },
-              {
-                step: "02",
-                title: "Custom Roadmap",
-                desc: "Receive your personalized Bridge Strategy and Goal Sheet.",
-                icon: Route
-              },
-              {
-                step: "03",
-                title: "Invest & Track",
-                desc: "Execute through our portal and track your progress as a consistent performer.",
-                icon: LineChart
-              }
-            ].map((item, i) => (
+            {activeData.steps.map((item, i) => (
               <motion.div
-                key={i}
+                key={`${activePhase}-${i}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -426,7 +626,7 @@ export default function App() {
       </section>
 
       {/* Lead Generator */}
-      <section id="checklist" className="py-20 relative overflow-hidden">
+      <section id="resources" className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[var(--color-electric-blue)]/5" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div 
@@ -437,15 +637,15 @@ export default function App() {
             className="max-w-4xl mx-auto bg-[var(--color-near-black)] border border-[var(--color-electric-blue)]/30 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 shadow-[0_0_50px_rgba(26,171,222,0.1)]"
           >
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl font-bold mb-4">Are You Ready for the Transition?</h2>
+              <h2 className="text-3xl font-bold mb-4">{activeData.leadMagnet.title}</h2>
               <p className="text-gray-400 mb-6">
-                Download our free <strong className="text-white">10-Point Retirement Readiness Checklist</strong> to see if your current strategy bridges the gap.
+                {activeData.leadMagnet.desc}
               </p>
               <button 
-                onClick={handleDownloadPDF}
+                onClick={() => setIsModalOpen(true)}
                 className="w-full sm:w-auto bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white px-8 py-4 rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2 mx-auto md:mx-0"
               >
-                <Download className="w-5 h-5" /> Get the Free Checklist
+                <Download className="w-5 h-5" /> {activeData.leadMagnet.buttonText}
               </button>
             </div>
             <div className="w-full md:w-1/3 aspect-square bg-gradient-to-br from-[var(--color-electric-blue)]/20 to-transparent rounded-2xl border border-[var(--color-electric-blue)]/20 flex items-center justify-center">
@@ -574,7 +774,9 @@ export default function App() {
                 <span className="text-sm text-[var(--color-electric-blue)] font-medium block">ARN-143723 | AMFI-Registered Mutual Fund Distributor</span>
               </div>
               <div className="flex flex-col items-center md:items-end gap-6">
-                <div className="flex gap-6 text-sm text-gray-400">
+                <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-gray-400">
+                  <a href="#" className="hover:text-white transition-colors">About Us</a>
+                  <a href="#zoho-calculator-link" className="hover:text-white transition-colors">Goal Calculator</a>
                   <a href="#" className="hover:text-white transition-colors">Contact</a>
                   <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
                   <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
@@ -583,8 +785,8 @@ export default function App() {
                   <a href="https://www.linkedin.com/in/praful-arun-patil/" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-electric-blue)] transition-colors" aria-label="LinkedIn">
                     <Linkedin className="w-5 h-5" />
                   </a>
-                  <a href="#" className="hover:text-[var(--color-electric-blue)] transition-colors" aria-label="Twitter">
-                    <Twitter className="w-5 h-5" />
+                  <a href="https://www.instagram.com/patilinvestments.co.in/" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-electric-blue)] transition-colors" aria-label="Instagram">
+                    <Instagram className="w-5 h-5" />
                   </a>
                   <a href="https://www.facebook.com/patilinvestments.co.in" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-electric-blue)] transition-colors" aria-label="Facebook">
                     <Facebook className="w-5 h-5" />
@@ -606,9 +808,14 @@ export default function App() {
               <p>
                 The information provided on this website is for educational purposes and should not be construed as financial advice. Any references to "Investment Roadmap", "Goal Sheet", or "Bridge Strategies" are part of our distribution services to help clients understand their mutual fund investments. We do not offer guaranteed returns or claim to be the "best" or "No. 1" in any category. Past performance of mutual funds is not an indicator of future returns.
               </p>
-              <p className="text-center pt-6">
-                © {new Date().getFullYear()} Patil Investments. All rights reserved.
-              </p>
+              <div className="text-center pt-6 space-y-2">
+                <p>
+                  © {new Date().getFullYear()} Patil Investments. All rights reserved.
+                </p>
+                <p className="text-gray-600 flex items-center justify-center gap-1">
+                  Made with <span className="text-red-500">❤️</span> for your financial freedom
+                </p>
+              </div>
             </div>
           </motion.div>
         </div>

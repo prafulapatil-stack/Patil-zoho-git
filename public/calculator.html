@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goal Planning Calculator | Patil Investments</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pi-blue:#1AABDE;
+  --pi-blue-dark:#158bb5;
+  --pi-blue-light:rgba(26,171,222,0.1);
+  --pi-blue-glow:rgba(26,171,222,0.15);
+  --pi-dark:#FFFFFF;
+  --pi-dark-alt:#0a0a0a;
+  --pi-white:#111214;
+  --pi-gray-50:transparent;
+  --pi-gray-100:rgba(255,255,255,0.05);
+  --pi-gray-200:rgba(255,255,255,0.1);
+  --pi-gray-300:rgba(255,255,255,0.2);
+  --pi-gray-400:#9ca3af;
+  --pi-gray-500:#6b7280;
+  --pi-gray-600:#d1d5db;
+  --pi-gray-700:#f3f4f6;
+  --pi-green:#10B981;
+  --pi-green-light:rgba(16,185,129,0.1);
+  --radius:12px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:transparent;
+  color:var(--pi-dark);
+  display:block;
+  padding:20px 16px;
+  margin:0;
+  overflow:hidden;
+}
+
+/* ── HEADER ── */
+.pi-header{text-align:center;margin-bottom:24px;max-width:560px;display:none;}
+
+/* ── CARD ── */
+.calc-card{
+  background:var(--pi-white);border-radius:16px;box-shadow:var(--shadow-lg);
+  max-width:560px;width:100%;overflow:hidden;border:1px solid var(--pi-gray-200);
+  margin: 0 auto;
+}
+.calc-inner{padding:28px 28px 20px}
+
+/* ── STEP INDICATOR ── */
+.steps-bar{
+  display:flex;align-items:center;justify-content:center;gap:0;
+  margin-bottom:24px;padding:0 20px;
+}
+.step-dot{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+  background:var(--pi-gray-100);color:var(--pi-gray-400);
+  border:2px solid var(--pi-gray-200);
+  transition:all 0.3s;flex-shrink:0;
+}
+.step-dot.active{background:var(--pi-blue);color:#ffffff;border-color:var(--pi-blue)}
+.step-dot.done{background:var(--pi-green);color:#ffffff;border-color:var(--pi-green)}
+.step-line{flex:1;height:2px;background:var(--pi-gray-200);margin:0 -1px;transition:background 0.3s}
+.step-line.done{background:var(--pi-green)}
+
+/* ── FORM SECTIONS ── */
+.form-step{display:none}
+.form-step.active{display:block;animation:fadeIn 0.35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.section-title{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--pi-blue);margin-bottom:16px;
+  display:flex;align-items:center;gap:6px;
+}
+.section-title::before{
+  content:'';width:18px;height:2px;background:var(--pi-blue);border-radius:1px;
+}
+
+/* ── FORM ROWS ── */
+.form-row{display:flex;gap:14px;margin-bottom:16px}
+.form-row.single{flex-direction:column}
+.form-col{flex:1;min-width:0}
+
+.field-label{
+  font-size:12.5px;font-weight:600;color:var(--pi-gray-600);margin-bottom:5px;
+  display:flex;align-items:center;gap:4px;
+}
+.field-label .req{color:var(--pi-blue);font-weight:700}
+
+/* ── GOAL TYPE GRID ── */
+.goal-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.goal-type-btn{
+  border:1.5px solid var(--pi-gray-200);border-radius:10px;background:var(--pi-white);
+  padding:10px 4px;cursor:pointer;text-align:center;transition:all 0.2s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+.goal-type-btn:hover{border-color:var(--pi-blue);background:var(--pi-blue-light)}
+.goal-type-btn.active{
+  border-color:var(--pi-blue);background:var(--pi-blue-light);
+  box-shadow:0 0 0 3px var(--pi-blue-glow);
+}
+.goal-type-btn .g-icon{font-size:22px;line-height:1}
+.goal-type-btn .g-label{font-size:10.5px;font-weight:600;color:var(--pi-gray-600)}
+.goal-type-btn.active .g-label{color:var(--pi-blue-dark)}
+
+/* ── INPUTS ── */
+.input-wrap{
+  position:relative;display:flex;align-items:center;
+  border:1.5px solid var(--pi-gray-200);border-radius:10px;
+  background:var(--pi-gray-50);transition:all 0.2s;overflow:hidden;
+}
+.input-wrap:focus-within{
+  border-color:var(--pi-blue);box-shadow:0 0 0 3px var(--pi-blue-glow);background:var(--pi-white);
+}
+.input-pre{padding:0 0 0 12px;font-size:14px;font-weight:600;color:var(--pi-gray-400);pointer-events:none}
+.input-suf{padding:0 12px 0 0;font-size:12px;font-weight:600;color:var(--pi-gray-400);pointer-events:none}
+input[type="text"],input[type="number"],input[type="date"]{
+  flex:1;border:none;outline:none;background:transparent;padding:11px 10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--pi-dark);
+  min-width:0;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type="number"]{-moz-appearance:textfield}
+select{
+  flex:1;border:none;outline:none;background:transparent;padding:11px 10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--pi-dark);
+  cursor:pointer;appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  padding-right:30px;
+}
+
+/* ── SLIDER ── */
+.slider-container{margin-top:6px}
+.slider-badge-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.slider-badge{
+  font-size:11px;font-weight:700;color:#ffffff;
+  background:var(--pi-blue);padding:2px 8px;border-radius:12px;
+  min-width:48px;text-align:center;
+}
+.slider-badge.end{background:var(--pi-gray-300);color:var(--pi-gray-600)}
+input[type="range"]{
+  width:100%;-webkit-appearance:none;height:6px;border-radius:3px;
+  background:var(--pi-gray-200);outline:none;margin:4px 0;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--pi-blue);cursor:pointer;
+  box-shadow:0 2px 6px rgba(28,160,239,0.35);
+  border:3px solid var(--pi-white);transition:transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+.slider-labels{
+  display:flex;justify-content:space-between;
+  font-size:10px;color:var(--pi-gray-400);font-weight:500;
+}
+
+/* ── TENURE TOGGLE ── */
+.tenure-toggle{
+  display:flex;gap:0;border:1.5px solid var(--pi-gray-200);border-radius:8px;
+  overflow:hidden;margin-bottom:8px;
+}
+.tenure-opt{
+  flex:1;padding:8px;text-align:center;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--pi-gray-500);
+  background:var(--pi-white);transition:all 0.2s;border:none;
+}
+.tenure-opt.active{background:var(--pi-blue);color:#ffffff}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:10px;margin-top:8px}
+.btn-back{
+  flex:0 0 auto;padding:12px 20px;border:1.5px solid var(--pi-gray-200);border-radius:10px;
+  background:var(--pi-white);font-family:'DM Sans',sans-serif;font-size:14px;
+  font-weight:600;color:var(--pi-gray-600);cursor:pointer;transition:all 0.2s;
+}
+.btn-back:hover{border-color:var(--pi-gray-300);background:var(--pi-gray-50)}
+.btn-next,.btn-calculate{
+  flex:1;padding:13px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,var(--pi-blue),var(--pi-blue-dark));
+  color:#ffffff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;
+  letter-spacing:0.02em;cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 14px rgba(28,160,239,0.3);
+}
+.btn-next:hover,.btn-calculate:hover{
+  transform:translateY(-1px);box-shadow:0 6px 20px rgba(28,160,239,0.4);
+}
+
+/* ── RESULTS ── */
+.results-panel{
+  display:none;background:linear-gradient(135deg,#111214 0%,#050505 100%);
+  padding:28px;animation:slideUp 0.4s ease;
+}
+.results-panel.show{display:block}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.results-header{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--pi-blue);margin-bottom:16px;
+}
+.result-card{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;padding:16px;margin-bottom:10px;
+}
+.result-label{font-size:11.5px;font-weight:500;color:var(--pi-gray-400);margin-bottom:4px}
+.result-value{font-size:22px;font-weight:700;color:#ffffff}
+.result-value .currency{font-size:15px;color:var(--pi-blue);margin-right:2px}
+
+.result-summary{
+  background:rgba(28,160,239,0.1);border:1px solid rgba(28,160,239,0.2);
+  border-radius:12px;padding:16px;margin-top:14px;
+  font-size:13.5px;line-height:1.6;color:rgba(255,255,255,0.85);
+}
+.result-summary strong{color:var(--pi-blue);font-weight:700}
+
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── LEAD FORM ── */
+.lead-form-section{
+  display:none;background:#111214;padding:24px 28px;
+  border-top:1px solid var(--pi-gray-100);
+}
+.lead-form-section.show{display:block;animation:fadeIn 0.35s ease}
+.lead-divider{
+  text-align:center;margin-bottom:16px;
+}
+.lead-divider span{
+  background:#111214;padding:0 12px;
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--pi-green);position:relative;
+}
+.lead-form-section .field-label{margin-bottom:4px}
+.lead-form-section .form-row{margin-bottom:12px}
+.btn-submit{
+  padding:13px 32px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,var(--pi-green),#059669);
+  color:#ffffff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 14px rgba(16,185,129,0.3);
+  margin:16px auto 4px;
+  text-align:center;
+  display:flex;justify-content:center;align-items:center;gap:8px;
+  width:fit-content;
+}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,0.4)}
+.consent-text{font-size:11px;color:var(--pi-gray-400);line-height:1.4;margin-top:10px;text-align:center}
+
+.thank-you{
+  display:none;text-align:center;padding:40px 28px;
+}
+.thank-you.show{display:block;animation:fadeIn 0.35s ease}
+.thank-you .check-circle{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--pi-green-light);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;font-size:28px;
+}
+.thank-you h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:6px}
+.thank-you p{font-size:13px;color:var(--pi-gray-500);line-height:1.5}
+
+/* ── FOOTER ── */
+.pi-footer{
+  display:none;
+}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  body{padding:12px 10px 32px}
+  .calc-inner,.results-panel,.lead-form-section{padding:20px 18px}
+  .pi-header h1{font-size:22px}
+  .goal-type-grid{grid-template-columns:repeat(4,1fr);gap:6px}
+  .goal-type-btn{padding:8px 2px}
+  .goal-type-btn .g-icon{font-size:18px}
+  .goal-type-btn .g-label{font-size:9.5px}
+  .form-row{flex-direction:column;gap:12px}
+  .result-grid{grid-template-columns:1fr}
+  .result-value{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- CALCULATOR CARD -->
+<div class="calc-card">
+  <div class="calc-inner">
+
+    <!-- STEP INDICATOR -->
+    <div class="steps-bar">
+      <div class="step-dot active" id="sd1">1</div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step-dot" id="sd2">2</div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step-dot" id="sd3">3</div>
+    </div>
+
+    <!-- ═══ STEP 1: GOAL DETAILS ═══ -->
+    <div class="form-step active" id="step1">
+      <div class="section-title">Define Your Goal</div>
+
+      <!-- Goal Type -->
+      <div class="field-label">Goal Type <span class="req">*</span></div>
+      <div class="goal-type-grid" id="goalTypeGrid">
+        <button class="goal-type-btn active" data-type="Retirement" onclick="selectGoal(this)">
+          <span class="g-icon">🏖️</span><span class="g-label">Retirement</span>
+        </button>
+        <button class="goal-type-btn" data-type="Child Education" onclick="selectGoal(this)">
+          <span class="g-icon">🎓</span><span class="g-label">Education</span>
+        </button>
+        <button class="goal-type-btn" data-type="Home" onclick="selectGoal(this)">
+          <span class="g-icon">🏠</span><span class="g-label">Home</span>
+        </button>
+        <button class="goal-type-btn" data-type="Marriage" onclick="selectGoal(this)">
+          <span class="g-icon">💍</span><span class="g-label">Marriage</span>
+        </button>
+        <button class="goal-type-btn" data-type="Car" onclick="selectGoal(this)">
+          <span class="g-icon">🚗</span><span class="g-label">Car</span>
+        </button>
+        <button class="goal-type-btn" data-type="Vacation" onclick="selectGoal(this)">
+          <span class="g-icon">✈️</span><span class="g-label">Vacation</span>
+        </button>
+        <button class="goal-type-btn" data-type="Emergency Fund" onclick="selectGoal(this)">
+          <span class="g-icon">🛡️</span><span class="g-label">Emergency</span>
+        </button>
+        <button class="goal-type-btn" data-type="Other" onclick="selectGoal(this)">
+          <span class="g-icon">🎯</span><span class="g-label">Other</span>
+        </button>
+      </div>
+
+      <!-- Goal Name -->
+      <div class="form-row">
+        <div class="form-col">
+          <div class="field-label">Goal Name <span class="req">*</span></div>
+          <div class="input-wrap">
+            <input type="text" id="goalName" value="My Retirement Happiness Plan" placeholder="e.g. My Retirement Happiness Plan">
+          </div>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="form-row single">
+        <div class="field-label">Amount (Today's Cost) <span class="req">*</span></div>
+        <div class="input-wrap">
+          <span class="input-pre">₹</span>
+          <input type="number" id="goalAmount" value="10000000">
+        </div>
+        <div class="slider-container">
+          <div class="slider-badge-row">
+            <span class="slider-badge" id="amtBadge">₹1.00 Cr</span>
+            <span class="slider-badge end">₹20.00 Cr+</span>
+          </div>
+          <input type="range" id="amtSlider" min="1000" max="200000000" step="10000" value="10000000" oninput="syncAmountFromSlider(this.value)">
+          <div class="slider-labels">
+            <span>₹1.00 K</span><span>₹4.00 Cr</span><span>₹8.00 Cr</span><span>₹12.00 Cr</span><span>₹16.00 Cr</span><span>₹20.00 Cr</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-next" onclick="goStep(2)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 2: TENURE & DATES ═══ -->
+    <div class="form-step" id="step2">
+      <div class="section-title">Timeline & Tenure</div>
+
+      <!-- Tenure Toggle -->
+      <div class="field-label">Goal Tenure <span class="req">*</span></div>
+      <div class="tenure-toggle">
+        <button class="tenure-opt" onclick="setTenureUnit('months',this)">Months</button>
+        <button class="tenure-opt active" onclick="setTenureUnit('years',this)">Years</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <div class="input-wrap">
+            <input type="number" id="tenureValue" value="10" min="1" max="40">
+            <span class="input-suf" id="tenureSuffix">Years</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <div class="slider-badge-row">
+          <span class="slider-badge" id="tenureBadge">10 Years</span>
+          <span class="slider-badge end">40+ Years</span>
+        </div>
+        <input type="range" id="tenureSlider" min="1" max="40" step="1" value="10" oninput="syncTenure(this.value)">
+        <div class="slider-labels" id="tenureLabels">
+          <span>1</span><span>6</span><span>11</span><span>16</span><span>21</span><span>25</span><span>30</span><span>35</span><span>40</span>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="form-row" style="margin-top:16px">
+        <div class="form-col">
+          <div class="field-label">Goal Start Date <span class="req">*</span></div>
+          <div class="input-wrap">
+            <input type="date" id="startDate" onchange="updateEndDate()">
+          </div>
+        </div>
+        <div class="form-col">
+          <div class="field-label">Goal End Date <span class="req">*</span></div>
+          <div class="input-wrap">
+            <input type="date" id="endDate" readonly style="color:var(--pi-gray-400)">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(1)">← Back</button>
+        <button class="btn-next" onclick="goStep(3)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: RETURNS & INFLATION ═══ -->
+    <div class="form-step" id="step3">
+      <div class="section-title">Investment Assumptions</div>
+
+      <!-- Savings If Any -->
+      <div class="form-row">
+        <div class="form-col">
+          <div class="field-label">Savings, If Any</div>
+          <div class="input-wrap">
+            <span class="input-pre">₹</span>
+            <input type="number" id="existingSavings" value="0" min="0" step="1000" placeholder="0">
+          </div>
+        </div>
+        <div class="form-col">
+          <div class="field-label">Expected Returns p.a on Savings</div>
+          <div class="input-wrap">
+            <input type="number" id="savingsReturn" value="" min="0" max="30" step="0.5" placeholder="e.g. 8">
+            <span class="input-suf">%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expected Return & Inflation -->
+      <div class="form-row">
+        <div class="form-col">
+          <div class="field-label">Expected Return p.a <span class="req">*</span></div>
+          <div class="input-wrap">
+            <input type="number" id="expectedReturn" value="12" min="1" max="30" step="0.5">
+            <span class="input-suf">%</span>
+          </div>
+        </div>
+        <div class="form-col">
+          <div class="field-label">Inflation Rate</div>
+          <div class="input-wrap">
+            <select id="inflationRate">
+              <option value="4">4%</option>
+              <option value="5" selected>5%</option>
+              <option value="6">6%</option>
+              <option value="7">7%</option>
+              <option value="8">8%</option>
+              <option value="10">10%</option>
+              <option value="12">12%</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Target Amount (auto-calculated) -->
+      <div class="form-row single">
+        <div class="field-label">Target Amount (Inflation-Adjusted)</div>
+        <div class="input-wrap" style="background:var(--pi-blue-light);border-color:var(--pi-blue)">
+          <span class="input-pre" style="color:var(--pi-blue)">₹</span>
+          <input type="text" id="targetAmount" readonly style="color:var(--pi-blue-dark);font-weight:700">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(2)">← Back</button>
+        <button class="btn-calculate" onclick="calculate()">Calculate My Plan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RESULTS PANEL ═══ -->
+  <div class="results-panel" id="resultsPanel">
+    <div class="results-header">📊 Your Goal Plan</div>
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-label">Lumpsum Investment</div>
+        <div class="result-value"><span class="currency">₹</span><span id="resLumpsum">—</span></div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Monthly SIP Required</div>
+        <div class="result-value"><span class="currency">₹</span><span id="resSIP">—</span></div>
+      </div>
+    </div>
+    <div class="result-summary" id="resultSummary"></div>
+  </div>
+
+  <!-- ═══ LEAD CAPTURE FORM ═══ -->
+  <div class="lead-form-section" id="leadForm">
+    <div class="lead-divider">
+      <span>✅ Get Your Personalised Goal Report</span>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <div class="field-label">Full Name <span class="req">*</span></div>
+        <div class="input-wrap">
+          <input type="text" id="leadName" placeholder="Your full name">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <div class="field-label">Mobile Number <span class="req">*</span></div>
+        <div class="input-wrap">
+          <span class="input-pre">+91</span>
+          <input type="text" id="leadMobile" placeholder="98XXXXXX00" maxlength="10">
+        </div>
+      </div>
+      <div class="form-col">
+        <div class="field-label">Email <span class="req">*</span></div>
+        <div class="input-wrap">
+          <input type="email" id="leadEmail" placeholder="you@email.com">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <div class="field-label">City</div>
+        <div class="input-wrap">
+          <input type="text" id="leadCity" placeholder="e.g., Thane / Mumbai">
+        </div>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="submitLead()">📩 Get My Free Goal Report</button>
+    <div class="consent-text">
+      <strong style="color: var(--pi-gray-600); font-size: 12px; display: block; margin-bottom: 6px;">* Email is mandatory to receive your personalized goal report.</strong>
+      By submitting, you agree to receive a call from Patil Investments regarding your financial goals. We respect your privacy — no spam, ever. AMFI registered MFD.
+    </div>
+  </div>
+
+  <!-- ═══ THANK YOU ═══ -->
+  <div class="thank-you" id="thankYou">
+    <div class="check-circle">✅</div>
+    <h3>Thank You!</h3>
+    <p>Your goal report has been noted. A team member from Patil Investments will connect with you within 24 hours to help you start your investment journey.</p>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let goalType = 'Retirement';
+let tenureUnit = 'years';
+
+// ── IFRAME RESIZE ──
+function sendHeight() {
+  const card = document.querySelector('.calc-card');
+  if (card) {
+    const height = card.offsetHeight + 40; // 40px for body padding
+    window.parent.postMessage({ type: 'resize-iframe', height: height }, '*');
+  }
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date();
+  document.getElementById('startDate').value = formatDate(today);
+  updateEndDate();
+  syncAmountFromSlider(10000000);
+  syncTenure(10);
+  updateTargetAmount();
+  
+  // Setup resize observer
+  const observer = new MutationObserver(sendHeight);
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+  window.addEventListener('resize', sendHeight);
+  setTimeout(sendHeight, 100);
+});
+
+// ── GOAL TYPE ──
+const goalNames = {
+  'Retirement': 'My Retirement Happiness Plan',
+  'Child Education': 'My Children\'s Education',
+  'Home': 'My Dream Home',
+  'Marriage': 'My Dream Wedding',
+  'Car': 'My Dream Car',
+  'Vacation': 'My Dream Vacation',
+  'Emergency Fund': 'My Emergency Fund',
+  'Other': 'My Goal'
+};
+
+function selectGoal(btn) {
+  document.querySelectorAll('.goal-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  goalType = btn.dataset.type;
+  document.getElementById('goalName').value = goalNames[goalType] || '';
+}
+
+// ── AMOUNT SYNC ──
+function syncAmountFromSlider(val) {
+  val = parseInt(val);
+  document.getElementById('goalAmount').value = val;
+  document.getElementById('amtSlider').value = val;
+  document.getElementById('amtBadge').textContent = '₹' + formatINR(val);
+  updateTargetAmount();
+}
+function syncAmountFromInput(val) {
+  if (!val || isNaN(val)) {
+    document.getElementById('amtBadge').textContent = '₹0';
+    document.getElementById('amtSlider').value = 0;
+    updateTargetAmount();
+    return;
+  }
+  val = parseInt(val);
+  document.getElementById('amtSlider').value = val;
+  document.getElementById('amtBadge').textContent = '₹' + formatINR(val);
+  updateTargetAmount();
+}
+document.getElementById('goalAmount').addEventListener('input', function() {
+  syncAmountFromInput(this.value);
+});
+
+// ── TENURE ──
+function setTenureUnit(unit, btn) {
+  tenureUnit = unit;
+  document.querySelectorAll('.tenure-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tenureSuffix').textContent = unit === 'years' ? 'Years' : 'Months';
+  const slider = document.getElementById('tenureSlider');
+  if (unit === 'months') {
+    slider.max = 480; slider.value = Math.min(parseInt(slider.value) * 12, 480);
+  } else {
+    slider.max = 40; slider.value = Math.min(Math.round(parseInt(slider.value) / 12) || 1, 40);
+  }
+  syncTenure(slider.value);
+  updateEndDate();
+}
+
+function syncTenure(val) {
+  val = parseInt(val);
+  document.getElementById('tenureValue').value = val;
+  document.getElementById('tenureSlider').value = val;
+  const label = tenureUnit === 'years' ? val + ' Years' : val + ' Months';
+  document.getElementById('tenureBadge').textContent = label;
+  updateEndDate();
+  updateTargetAmount();
+}
+document.getElementById('tenureValue').addEventListener('input', function() {
+  syncTenure(this.value || 1);
+});
+
+// ── DATES ──
+function updateEndDate() {
+  const start = document.getElementById('startDate').value;
+  if (!start) return;
+  const d = new Date(start);
+  const val = parseInt(document.getElementById('tenureValue').value) || 1;
+  if (tenureUnit === 'years') d.setFullYear(d.getFullYear() + val);
+  else d.setMonth(d.getMonth() + val);
+  document.getElementById('endDate').value = formatDate(d);
+}
+
+function formatDate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+// ── TARGET AMOUNT (inflation adjusted) ──
+function updateTargetAmount() {
+  const amount = parseFloat(document.getElementById('goalAmount').value) || 0;
+  const inflation = parseFloat(document.getElementById('inflationRate')?.value) || 5;
+  const tenureVal = parseInt(document.getElementById('tenureValue').value) || 1;
+  const years = tenureUnit === 'years' ? tenureVal : tenureVal / 12;
+  const target = amount * Math.pow(1 + inflation / 100, years);
+  document.getElementById('targetAmount').value = formatINR(Math.round(target));
+}
+// Listen for inflation changes
+document.getElementById('inflationRate')?.addEventListener('change', updateTargetAmount);
+
+// ── STEP NAVIGATION ──
+function goStep(n) {
+  // Validation
+  if (n === 2) {
+    if (!document.getElementById('goalName').value.trim()) {
+      shakeField('goalName'); return;
+    }
+  }
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+
+  // Update step dots
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('sd' + i);
+    dot.classList.remove('active', 'done');
+    if (i < n) { dot.classList.add('done'); dot.textContent = '✓'; }
+    else if (i === n) { dot.classList.add('active'); dot.textContent = i; }
+    else { dot.textContent = i; }
+  }
+  document.getElementById('sl1').classList.toggle('done', n > 1);
+  document.getElementById('sl2').classList.toggle('done', n > 2);
+
+  if (n === 3) updateTargetAmount();
+  setTimeout(sendHeight, 50);
+  setTimeout(sendHeight, 350); // after animation
+}
+
+function shakeField(id) {
+  const el = document.getElementById(id).closest('.input-wrap');
+  el.style.borderColor = '#EF4444';
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'shake 0.4s ease';
+  setTimeout(() => { el.style.borderColor = ''; el.style.animation = ''; }, 600);
+}
+
+// ── CALCULATE ──
+function calculate() {
+  const amount = parseFloat(document.getElementById('goalAmount').value) || 0;
+  const inflation = parseFloat(document.getElementById('inflationRate').value) / 100;
+  const expectedReturn = parseFloat(document.getElementById('expectedReturn').value) / 100;
+  const tenureVal = parseInt(document.getElementById('tenureValue').value) || 1;
+  const years = tenureUnit === 'years' ? tenureVal : tenureVal / 12;
+  const months = tenureUnit === 'years' ? tenureVal * 12 : tenureVal;
+
+  const existingSavings = parseFloat(document.getElementById('existingSavings').value) || 0;
+  const savingsReturnPct = parseFloat(document.getElementById('savingsReturn').value) || 0;
+  const savingsReturn = savingsReturnPct / 100;
+
+  // Future value of goal (inflation adjusted)
+  const targetAmount = amount * Math.pow(1 + inflation, years);
+
+  // Future value of existing savings
+  const fvSavings = existingSavings * Math.pow(1 + savingsReturn, years);
+
+  // Remaining corpus needed
+  const remaining = Math.max(targetAmount - fvSavings, 0);
+
+  // Lumpsum required today
+  const lumpsum = remaining / Math.pow(1 + expectedReturn, years);
+
+  // Monthly SIP required (annuity due formula)
+  const monthlyRate = expectedReturn / 12;
+  let sip = 0;
+  if (monthlyRate > 0 && months > 0) {
+    sip = remaining / ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate * (1 + monthlyRate));
+  }
+
+  // Display results
+  document.getElementById('resLumpsum').textContent = formatINR(Math.round(lumpsum));
+  document.getElementById('resSIP').textContent = formatINR(Math.round(sip));
+
+  const goalName = document.getElementById('goalName').value || 'your goal';
+  document.getElementById('resultSummary').innerHTML =
+    `To achieve <strong>"${goalName}"</strong>, you will need to do a one-time lumpsum investment of <strong>₹${formatINR(Math.round(lumpsum))}</strong> or start a monthly SIP of <strong>₹${formatINR(Math.round(sip))}</strong> to accumulate a target corpus of <strong>₹${formatINR(Math.round(targetAmount))}</strong> in <strong>${tenureUnit === 'years' ? tenureVal + ' years' : tenureVal + ' months'}</strong>.`;
+
+  document.getElementById('resultsPanel').classList.add('show');
+  document.getElementById('leadForm').classList.add('show');
+
+  // Scroll to results
+  setTimeout(() => {
+    document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+  
+  setTimeout(sendHeight, 50);
+  setTimeout(sendHeight, 450);
+}
+
+// ── LEAD SUBMISSION via Zoho CRM Webform ──
+function submitLead() {
+  const name = document.getElementById('leadName').value.trim();
+  const mobile = document.getElementById('leadMobile').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+  if (!name) { shakeField('leadName'); return; }
+  if (!mobile || mobile.length < 10) { shakeField('leadMobile'); return; }
+  if (!email || !email.includes('@')) { shakeField('leadEmail'); return; }
+
+  // Parse amounts back to raw numbers (remove L, K, Cr suffixes)
+  function parseAmount(el) {
+    const text = typeof el === 'string' ? el : el.textContent || el.value || '0';
+    const clean = text.replace(/[₹,\s]/g, '');
+    if (clean.includes('Cr')) return Math.round(parseFloat(clean) * 10000000);
+    if (clean.includes('L')) return Math.round(parseFloat(clean) * 100000);
+    if (clean.includes('K')) return Math.round(parseFloat(clean) * 1000);
+    return Math.round(parseFloat(clean) || 0);
+  }
+
+  // Format date from YYYY-MM-DD to DD/MM/YYYY for Zoho
+  function formatDateForZoho(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
+    return dateStr;
+  }
+
+  // Create hidden iframe so form submission doesn't redirect the page
+  let iframe = document.getElementById('zohoSubmitFrame');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.name = 'zohoSubmitFrame';
+    iframe.id = 'zohoSubmitFrame';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  // Create hidden form targeting the iframe
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://crm.zoho.in/crm/WebToLeadForm';
+  form.acceptCharset = 'UTF-8';
+  form.target = 'zohoSubmitFrame';
+  form.style.display = 'none';
+
+  const fields = {
+    'xnQsjsdp': '7945e88275acbdff6906428a27d78af09bac2e1a6dd9afb203d48b78eae5d9d9',
+    'xmIwtLD': 'ea2afd6b00a46c26ef28363adc7356799ba6fb790f629a83bf8586356b7c3cd7755e5758ef15f4d6a49e4100df28f18e',
+    'actionType': 'TGVhZHM=',
+    'returnURL': 'https://patilinvestments.zohosites.in/files/patil-goal-calculator.html',
+    'Last Name': name,
+    'Mobile': '+91' + mobile,
+    'Email': document.getElementById('leadEmail').value.trim(),
+    'LEADCF3': goalType,
+    'LEADCF4': document.getElementById('goalName').value,
+    'LEADCF70': document.getElementById('goalAmount').value,
+    'LEADCF5': document.getElementById('tenureValue').value + ' ' + tenureUnit,
+    'LEADCF117': formatDateForZoho(document.getElementById('startDate').value),
+    'LEADCF116': formatDateForZoho(document.getElementById('endDate').value),
+    'LEADCF72': document.getElementById('existingSavings').value || '0',
+    'LEADCF71': document.getElementById('savingsReturn').value || '0',
+    'LEADCF73': document.getElementById('expectedReturn').value || '12',
+    'LEADCF67': document.getElementById('inflationRate').value || '6',
+    'LEADCF66': parseAmount(document.getElementById('targetAmount')).toString(),
+    'LEADCF69': parseAmount(document.getElementById('resSIP')).toString(),
+    'LEADCF68': parseAmount(document.getElementById('resLumpsum')).toString(),
+    'Lead Source': 'Goal Calculator',
+  };
+
+  Object.entries(fields).forEach(([k, v]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = k;
+    input.value = v || '';
+    form.appendChild(input);
+  });
+
+  // Append form and submit immediately
+  document.body.appendChild(form);
+  form.submit();
+
+  // Clean up form after submission
+  setTimeout(() => { form.remove(); }, 5000);
+
+  // Show thank you
+  document.getElementById('leadForm').classList.remove('show');
+  document.getElementById('thankYou').classList.add('show');
+  document.getElementById('thankYou').scrollIntoView({ behavior: 'smooth' });
+
+  console.log('Form submitted to Zoho CRM via iframe');
+}
+
+// ── FORMATTERS ──
+function formatINR(num) {
+  if (num >= 10000000) return (num / 10000000).toFixed(2) + ' Cr';
+  if (num >= 100000) return (num / 100000).toFixed(2) + ' L';
+  if (num >= 1000) return (num / 1000).toFixed(2) + ' K';
+  return num.toLocaleString('en-IN');
+}
+
+// Add shake animation
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';
+document.head.appendChild(shakeStyle);
+</script>
+</body>
+</html>
