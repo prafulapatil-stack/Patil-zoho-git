@@ -24,60 +24,13 @@ const AnimatedCounter = ({ from, to }: { from: number, to: number }) => {
   return <motion.span ref={ref}>{rounded}</motion.span>;
 };
 
-const Logo = ({ className = "" }: { className?: string }) => {
-  const [logoUrl, setLogoUrl] = useState("/logo.png");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setLogoUrl(url);
-      window.dispatchEvent(new CustomEvent('logo-updated', { detail: url }));
-    }
-  };
-
-  useEffect(() => {
-    const handleLogoUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<string>;
-      setLogoUrl(customEvent.detail);
-    };
-    window.addEventListener('logo-updated', handleLogoUpdate);
-    return () => window.removeEventListener('logo-updated', handleLogoUpdate);
-  }, []);
-
-  return (
-    <div 
-      className={`relative group cursor-pointer inline-block ${className}`}
-      onClick={() => fileInputRef.current?.click()}
-    >
-      <img 
-        src={logoUrl} 
-        alt="Patil Investments Logo" 
-        className="h-full w-auto object-contain"
-        onError={(e) => {
-          e.currentTarget.src = "https://placehold.co/400x120/111214/1AABDE.png?text=Upload+Logo&font=Montserrat";
-        }}
-      />
-      
-      <div className="absolute inset-0 bg-[var(--color-near-black)]/90 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center rounded border border-dashed border-[var(--color-electric-blue)] p-1 z-10">
-        <span className="text-white text-xs font-bold mb-0.5">Update Logo</span>
-        <span className="text-gray-300 text-[9px] text-center leading-tight">
-          Format: PNG/SVG<br/>
-          Size: ~400x120px
-        </span>
-      </div>
-
-      <input 
-        type="file" 
-        ref={fileInputRef} 
-        onChange={handleImageUpload} 
-        accept="image/png, image/svg+xml, image/jpeg" 
-        className="hidden" 
-      />
-    </div>
-  );
-};
+const Logo = ({ className = "" }: { className?: string }) => (
+  <div className={`flex items-center ${className}`}>
+    <span className="text-2xl md:text-3xl font-bold text-white tracking-tight whitespace-nowrap">
+      Patil <span className="text-[var(--color-electric-blue)]">Investments</span>
+    </span>
+  </div>
+);
 
 const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
