@@ -114,10 +114,10 @@ body{
 .input-wrap{
   position:relative;display:flex;align-items:center;
   border:1.5px solid var(--pi-gray-200);border-radius:10px;
-  background:var(--pi-gray-50);transition:all 0.2s;overflow:hidden;
+  background:var(--pi-gray-100);transition:all 0.2s;overflow:hidden;
 }
 .input-wrap:focus-within{
-  border-color:var(--pi-blue);box-shadow:0 0 0 3px var(--pi-blue-glow);background:var(--pi-white);
+  border-color:var(--pi-blue);box-shadow:0 0 0 3px var(--pi-blue-glow);background:var(--pi-gray-200);
 }
 .input-pre{padding:0 0 0 12px;font-size:14px;font-weight:600;color:var(--pi-gray-400);pointer-events:none}
 .input-suf{padding:0 12px 0 0;font-size:12px;font-weight:600;color:var(--pi-gray-400);pointer-events:none}
@@ -276,10 +276,10 @@ input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.15)}
   body{padding:12px 10px 32px}
   .calc-inner,.results-panel,.lead-form-section{padding:20px 18px}
   .pi-header h1{font-size:22px}
-  .goal-type-grid{grid-template-columns:repeat(4,1fr);gap:6px}
-  .goal-type-btn{padding:8px 2px}
-  .goal-type-btn .g-icon{font-size:18px}
-  .goal-type-btn .g-label{font-size:9.5px}
+  .goal-type-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .goal-type-btn{padding:10px 8px;flex-direction:row;justify-content:center;gap:8px}
+  .goal-type-btn .g-icon{font-size:20px}
+  .goal-type-btn .g-label{font-size:12px}
   .form-row{flex-direction:column;gap:12px}
   .result-grid{grid-template-columns:1fr}
   .result-value{font-size:18px}

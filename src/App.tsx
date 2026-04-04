@@ -183,21 +183,48 @@ export default function App() {
     setIsSubmitting(true);
     
     try {
-      // ZOHO CRM WEBHOOK INTEGRATION POINT
-      // Replace this URL with your actual Zoho CRM Webhook URL
-      /*
-      await fetch('YOUR_ZOHO_WEBHOOK_URL', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          leadSource: 'Website Lead Magnet',
-          phase: activeData.id
-        })
+      // Create hidden iframe so form submission doesn't redirect the page
+      let iframe = document.getElementById('zohoSubmitFrameApp') as HTMLIFrameElement;
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = 'zohoSubmitFrameApp';
+        iframe.id = 'zohoSubmitFrameApp';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+
+      // Create hidden form targeting the iframe
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://crm.zoho.in/crm/WebToLeadForm';
+      form.acceptCharset = 'UTF-8';
+      form.target = 'zohoSubmitFrameApp';
+      form.style.display = 'none';
+
+      const fields = {
+        'xnQsjsdp': '7945e88275acbdff6906428a27d78af09bac2e1a6dd9afb203d48b78eae5d9d9',
+        'xmIwtLD': 'ea2afd6b00a46c26ef28363adc7356799ba6fb790f629a83bf8586356b7c3cd7755e5758ef15f4d6a49e4100df28f18e',
+        'actionType': 'TGVhZHM=',
+        'returnURL': 'https://patilinvestments.zohosites.in',
+        'Last Name': formData.name,
+        'Mobile': '+91' + formData.phone,
+        'Email': formData.email,
+        'Lead Source': 'Website Lead Magnet - ' + activeData.title,
+      };
+
+      Object.entries(fields).forEach(([k, v]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = k;
+        input.value = v || '';
+        form.appendChild(input);
       });
-      */
+
+      // Append form and submit
+      document.body.appendChild(form);
+      form.submit();
       
-      // Simulate network request for now
+      // Wait a moment for submission to process
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Trigger PDF Download
@@ -206,7 +233,13 @@ export default function App() {
       // Close modal and reset
       setIsModalOpen(false);
       setFormData({ name: '', email: '', phone: '' });
-      // Optional: Show success message
+      
+      // Clean up form
+      setTimeout(() => {
+        if (document.body.contains(form)) {
+          document.body.removeChild(form);
+        }
+      }, 2000);
       
     } catch (error) {
       console.error("Error submitting to Zoho:", error);
@@ -369,7 +402,10 @@ export default function App() {
                 {activeData.description}
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <button className="w-full sm:w-auto bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white px-8 py-4 rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(26,171,222,0.3)] hover:shadow-[0_0_30px_rgba(26,171,222,0.5)]">
+                <button 
+                  onClick={() => document.getElementById('zoho-calculator-link')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="w-full sm:w-auto bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white px-8 py-4 rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(26,171,222,0.3)] hover:shadow-[0_0_30px_rgba(26,171,222,0.5)]"
+                >
                   Start Your Roadmap <ArrowRight className="w-5 h-5" />
                 </button>
                 <button 
