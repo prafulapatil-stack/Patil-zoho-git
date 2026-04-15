@@ -284,6 +284,44 @@ input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.15)}
   .result-grid{grid-template-columns:1fr}
   .result-value{font-size:18px}
 }
+
+/* ── TOGGLE SWITCH ── */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #333;
+  transition: .4s;
+  border-radius: 22px;
+}
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .toggle-slider {
+  background-color: var(--pi-blue);
+}
+input:checked + .toggle-slider:before {
+  transform: translateX(18px);
+}
 </style>
 </head>
 <body>
@@ -466,6 +504,24 @@ input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.15)}
             </select>
           </div>
         </div>
+      </div>
+
+      <!-- Annual Step-Up -->
+      <div class="form-row">
+        <div class="form-col">
+          <div class="field-label" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Annual SIP Step-Up</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="enableStepUp" onchange="toggleStepUp()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="input-wrap" id="stepUpWrap" style="opacity: 0.5; pointer-events: none;">
+            <input type="number" id="stepUpPercent" value="10" min="1" max="50" step="1">
+            <span class="input-suf">%</span>
+          </div>
+        </div>
+        <div class="form-col"></div>
       </div>
 
       <!-- Target Amount (auto-calculated) -->
@@ -680,6 +736,18 @@ function updateTargetAmount() {
 // Listen for inflation changes
 document.getElementById('inflationRate')?.addEventListener('change', updateTargetAmount);
 
+function toggleStepUp() {
+  const isEnabled = document.getElementById('enableStepUp').checked;
+  const wrap = document.getElementById('stepUpWrap');
+  if (isEnabled) {
+    wrap.style.opacity = '1';
+    wrap.style.pointerEvents = 'auto';
+  } else {
+    wrap.style.opacity = '0.5';
+    wrap.style.pointerEvents = 'none';
+  }
+}
+
 // ── STEP NAVIGATION ──
 function goStep(n) {
   // Validation
@@ -745,7 +813,21 @@ function calculate() {
   const monthlyRate = expectedReturn / 12;
   let sip = 0;
   if (monthlyRate > 0 && months > 0) {
-    sip = remaining / ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate * (1 + monthlyRate));
+    const isStepUp = document.getElementById('enableStepUp').checked;
+    if (isStepUp) {
+      const stepUpPercent = parseFloat(document.getElementById('stepUpPercent').value) || 0;
+      const g = stepUpPercent / 100;
+      let totalMultiplier = 0;
+      for (let i = 0; i < months; i++) {
+        let year = Math.floor(i / 12);
+        let currentSipMultiplier = Math.pow(1 + g, year);
+        let monthsRemaining = months - i;
+        totalMultiplier += currentSipMultiplier * Math.pow(1 + monthlyRate, monthsRemaining);
+      }
+      sip = remaining / totalMultiplier;
+    } else {
+      sip = remaining / ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate * (1 + monthlyRate));
+    }
   }
 
   // Display results
@@ -753,8 +835,14 @@ function calculate() {
   document.getElementById('resSIP').textContent = formatINR(Math.round(sip));
 
   const goalName = document.getElementById('goalName').value || 'your goal';
+  let stepUpText = "";
+  if (document.getElementById('enableStepUp').checked) {
+    const stepUpPercent = document.getElementById('stepUpPercent').value;
+    stepUpText = ` (increasing by ${stepUpPercent}% annually)`;
+  }
+
   document.getElementById('resultSummary').innerHTML =
-    `To achieve <strong>"${goalName}"</strong>, you will need to do a one-time lumpsum investment of <strong>₹${formatINR(Math.round(lumpsum))}</strong> or start a monthly SIP of <strong>₹${formatINR(Math.round(sip))}</strong> to accumulate a target corpus of <strong>₹${formatINR(Math.round(targetAmount))}</strong> in <strong>${tenureUnit === 'years' ? tenureVal + ' years' : tenureVal + ' months'}</strong>.`;
+    `To achieve <strong>"${goalName}"</strong>, you will need to do a one-time lumpsum investment of <strong>₹${formatINR(Math.round(lumpsum))}</strong> or start a monthly SIP of <strong>₹${formatINR(Math.round(sip))}</strong>${stepUpText} to accumulate a target corpus of <strong>₹${formatINR(Math.round(targetAmount))}</strong> in <strong>${tenureUnit === 'years' ? tenureVal + ' years' : tenureVal + ' months'}</strong>.`;
 
   document.getElementById('resultsPanel').classList.add('show');
   document.getElementById('leadForm').classList.add('show');
