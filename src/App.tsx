@@ -5,8 +5,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'motion/react';
-import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldAlert, ChevronDown, BarChart3, PieChart, Users, ShieldCheck, Compass, Route, LineChart, Linkedin, Instagram, Facebook, Star, X, Calculator, LogIn, ArrowUp, ArrowLeft, Target, History, Award, Shield, Building, Briefcase, Landmark, MessageCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldAlert, ChevronDown, BarChart3, PieChart, Users, ShieldCheck, Compass, Route, LineChart, Linkedin, Instagram, Facebook, Star, X, Calculator, LogIn, ArrowUp, ArrowLeft, Target, History, Award, Shield, Building, Briefcase, Landmark, MessageCircle, FileText } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import { GoogleReviews } from './components/GoogleReviews';
+import Library from './presentations/Library';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -29,23 +31,29 @@ const PHASE_DATA = [
       { step: "03", title: "Portfolio Review", desc: "Annual rebalancing to ensure you stay on the path to your goals.", icon: LineChart }
     ],
     leadMagnet: {
-      title: "Want to Fast-Track Your Wealth?",
-      desc: "Download our free Wealth Accumulation Goal Sheet to discover the power of compounding and consistent SIP strategies.",
-      buttonText: "Get the Goal Sheet",
-      pdfTitle: "WEALTH ACCUMULATION",
-      pdfSubtitle: "GOAL SHEET",
+      title: "The Wealth Foundation Scorecard",
+      desc: "Download our free 10-point checklist to see if your financial house is in order.",
+      buttonText: "Get the Scorecard",
+      pdfTitle: "WEALTH FOUNDATION",
+      pdfSubtitle: "SCORECARD",
       points: [
-        "Have you calculated your exact 'Retirement Confidence' number?",
-        "Are you saving at least 20-30% of your monthly income?",
-        "Is your portfolio heavily weighted towards high-growth equity funds?",
         "Do you have an emergency fund covering 6 months of expenses?",
-        "Have you automated your investments via SIPs to avoid emotional decisions?",
+        "Do you have adequate term life insurance (10-15x annual income)?",
+        "Are you saving at least 20% of your monthly income?",
+        "Are your SIPs mapped to specific goals (e.g., kids' education, retirement)?",
+        "Is your portfolio heavily weighted towards high-growth equity funds?",
+        "Have you automated your investments to avoid emotional decisions?",
         "Are you maximizing your tax-saving investment options (ELSS, etc.)?",
-        "Do you have adequate term life and health insurance coverage?",
         "Are you avoiding high-interest consumer debt?",
         "Do you increase your SIP amount annually in line with your salary hikes?",
         "Do you review your portfolio performance with a professional annually?"
       ]
+    },
+    presentation: {
+      title: "The Millionaire SIP Wealth Blueprint",
+      desc: "Interactive guide focusing on the cost of waiting & Step-Up SIPs.",
+      buttonText: "Open Presentation",
+      componentId: "sip"
     }
   },
   {
@@ -62,23 +70,29 @@ const PHASE_DATA = [
       { step: "03", title: "Invest & Track", desc: "Execute through our portal and track your progress as a consistent performer.", icon: LineChart }
     ],
     leadMagnet: {
-      title: "Are You Ready for the Transition?",
-      desc: "Download our free 10-Point Retirement Readiness Checklist to see if your current strategy bridges the gap.",
-      buttonText: "Get the Free Checklist",
-      pdfTitle: "RETIREMENT READINESS",
+      title: "The 5-Year Bridge Strategy Checklist",
+      desc: "Download our free checklist to safely shift from aggressive growth to capital preservation.",
+      buttonText: "Get the Checklist",
+      pdfTitle: "5-YEAR BRIDGE STRATEGY",
       pdfSubtitle: "CHECKLIST",
       points: [
-        "Have you calculated your exact 'Retirement Gap' based on your desired lifestyle?",
-        "Is your current portfolio diversified enough to withstand market volatility?",
-        "Do you have a clear Systematic Withdrawal Plan (SWP) for monthly cash flow?",
-        "Have you accounted for inflation (especially healthcare) in your projections?",
-        "Are your investments aligned with your risk tolerance as you approach retirement?",
-        "Do you have an adequate emergency fund separate from your retirement corpus?",
-        "Have you consolidated your investments for easier tracking and management?",
+        "Have you calculated your exact 'Retirement Gap' based on lifestyle?",
+        "Is your portfolio diversified enough to withstand market volatility?",
+        "Have you started shifting high-risk equity to safer debt instruments?",
+        "Do you have a clear Systematic Withdrawal Plan (SWP) strategy?",
+        "Have you accounted for healthcare inflation in your projections?",
+        "Are your investments consolidated for easier tracking?",
         "Is your portfolio tax-optimized for the withdrawal phase?",
-        "Have you planned for estate transition and nominated beneficiaries?",
-        "Do you review your 'Goal Sheet' with a professional at least once a year?"
+        "Have you planned for estate transition and updated all beneficiaries?",
+        "Do you have a separate emergency fund outside your retirement corpus?",
+        "Do you review your 'Goal Sheet' with a professional annually?"
       ]
+    },
+    presentation: {
+      title: "The Transition Hero Scorecard",
+      desc: "Interactive validation and gap analysis for ages 50-58.",
+      buttonText: "Open Presentation",
+      componentId: "transition"
     }
   },
   {
@@ -95,23 +109,29 @@ const PHASE_DATA = [
       { step: "03", title: "Capital Preservation", desc: "Monitor the withdrawal rate to ensure your corpus outlives you.", icon: LineChart }
     ],
     leadMagnet: {
-      title: "Need Reliable Monthly Income?",
-      desc: "Download our free SWP & Tax Optimization Guide to learn how to generate a paycheck from your portfolio.",
-      buttonText: "Get the SWP Guide",
-      pdfTitle: "SWP & TAX OPTIMIZATION",
-      pdfSubtitle: "GUIDE",
+      title: "The Safe Withdrawal & Legacy Checklist",
+      desc: "Download our free 10-point audit to ensure you don't outlive your money and your family is protected.",
+      buttonText: "Get the Checklist",
+      pdfTitle: "SAFE WITHDRAWAL & LEGACY",
+      pdfSubtitle: "CHECKLIST",
       points: [
-        "Have you accurately mapped out your fixed and variable monthly expenses?",
-        "Is your withdrawal rate sustainable (typically 3-4% annually)?",
-        "Are you utilizing a 'bucket strategy' to protect against sequence of returns risk?",
-        "Is your SWP structured to minimize capital gains taxes?",
-        "Do you have a dedicated healthcare fund or comprehensive senior health insurance?",
-        "Are you avoiding withdrawing from equity funds during market downturns?",
-        "Have you simplified your portfolio to make management easier in retirement?",
-        "Is your estate plan (Will, nominations, trusts) fully updated and communicated?",
-        "Do you have a trusted contact listed on all your financial accounts?",
-        "Do you conduct a semi-annual review to adjust withdrawals for inflation?"
+        "Is your annual withdrawal rate strictly under 6% of your total corpus?",
+        "Have you accounted for 10%+ healthcare inflation in your expenses?",
+        "Are all your nominees and beneficiaries updated across all accounts?",
+        "Do you have a clear estate plan or will in place?",
+        "Is your 'Cash Bucket' fully funded for the next 2 years of expenses?",
+        "Are you using a tax-efficient Systematic Withdrawal Plan (SWP)?",
+        "Do you have a 'Growth Bucket' to fight long-term inflation?",
+        "Are you avoiding unnecessary risks with your core retirement corpus?",
+        "Do you have adequate health insurance independent of your employer?",
+        "Do you review your withdrawal sustainability with a professional annually?"
       ]
+    },
+    presentation: {
+      title: "The Salary for Life Income Map",
+      desc: "Interactive guide focusing on SWP & the Three-Bucket Strategy.",
+      buttonText: "Open Presentation",
+      componentId: "liver"
     }
   }
 ];
@@ -160,8 +180,13 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
 };
 
 export default function App() {
+  const [currentView, setCurrentView] = useState<'main' | 'library' | 'sip' | 'liver' | 'transition'>('main');
   const [activePhase, setActivePhase] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    phaseId: number;
+    resourceType: 'checklist' | 'presentation';
+  }>({ isOpen: false, phaseId: 0, resourceType: 'checklist' });
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [calcHeight, setCalcHeight] = useState(500);
@@ -198,6 +223,14 @@ export default function App() {
   };
 
   const activeData = PHASE_DATA[activePhase];
+  const activeModalData = PHASE_DATA[modalConfig.phaseId];
+
+  const openModal = (phaseId: number, resourceType: 'checklist' | 'presentation') => {
+    setModalConfig({ isOpen: true, phaseId, resourceType });
+    setModalStep(resourceType === 'checklist' ? 1 : 2);
+    setIsSuccess(false);
+    setChecklistAnswers({});
+  };
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -222,14 +255,18 @@ export default function App() {
       form.target = 'zohoSubmitFrameApp';
       form.style.display = 'none';
 
-      const downloadLink = `${window.location.origin}?download_magnet=${activePhase}`;
+      const downloadLink = `${window.location.origin}?download_magnet=${modalConfig.phaseId}`;
 
-      let descriptionText = `Checklist Responses (${activeData.leadMagnet.pdfSubtitle}):\n`;
-      activeData.leadMagnet.points.forEach((point, idx) => {
-        const answer = checklistAnswers[idx] !== undefined ? (checklistAnswers[idx] ? 'Yes' : 'No') : 'Not Answered';
-        descriptionText += `${idx + 1}. ${point} - ${answer}\n`;
-      });
-      descriptionText += `\nDirect Download Link: ${downloadLink}\n`;
+      let descriptionText = `Resource Requested: ${modalConfig.resourceType === 'checklist' ? activeModalData.leadMagnet.pdfSubtitle : activeModalData.presentation.title}\n\n`;
+      
+      if (modalConfig.resourceType === 'checklist') {
+        descriptionText += `Checklist Responses:\n`;
+        activeModalData.leadMagnet.points.forEach((point, idx) => {
+          const answer = checklistAnswers[idx] !== undefined ? (checklistAnswers[idx] ? 'Yes' : 'No') : 'Not Answered';
+          descriptionText += `${idx + 1}. ${point} - ${answer}\n`;
+        });
+        descriptionText += `\nDirect Download Link: ${downloadLink}\n`;
+      }
 
       const fields = {
         'xnQsjsdp': '7945e88275acbdff6906428a27d78af09bac2e1a6dd9afb203d48b78eae5d9d9',
@@ -239,7 +276,7 @@ export default function App() {
         'Last Name': formData.name,
         'Mobile': '+91' + formData.phone,
         'Email': formData.email,
-        'Lead Source': 'Website Lead Magnet - ' + activeData.titleHighlight,
+        'Lead Source': 'Website Lead Magnet - ' + activeModalData.titleHighlight,
         'Description': descriptionText,
       };
 
@@ -613,6 +650,11 @@ export default function App() {
     }
   }, []);
 
+  if (currentView === 'library') return <Library onBack={() => setCurrentView('main')} />;
+  if (currentView === 'sip') return <Library onBack={() => setCurrentView('main')} initialView="sip" />;
+  if (currentView === 'liver') return <Library onBack={() => setCurrentView('main')} initialView="liver" />;
+  if (currentView === 'transition') return <Library onBack={() => setCurrentView('main')} initialView="transition" />;
+
   return (
     <div className="min-h-screen bg-[var(--color-near-black)] text-white font-sans selection:bg-[var(--color-electric-blue)] selection:text-white">
       {/* Header */}
@@ -629,6 +671,7 @@ export default function App() {
             <a href="#journey" className="hover:text-[var(--color-electric-blue)] transition-colors">Your Journey</a>
             <a href="#plan" className="hover:text-[var(--color-electric-blue)] transition-colors">3-Step Plan</a>
             <a href="#resources" className="hover:text-[var(--color-electric-blue)] transition-colors">Free Resources</a>
+            <button onClick={() => setCurrentView('library')} className="hover:text-[var(--color-electric-blue)] transition-colors cursor-pointer">Lead Magnet Library</button>
           </nav>
           <div className="flex items-center gap-4">
             <a 
@@ -643,9 +686,11 @@ export default function App() {
               href="https://wa.me/919137776263" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="hidden md:flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)] hover:shadow-[0_0_25px_rgba(37,211,102,0.5)] hover:-translate-y-0.5"
+              className="flex items-center gap-1 md:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 py-2 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-bold transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)] hover:shadow-[0_0_25px_rgba(37,211,102,0.5)] hover:-translate-y-0.5"
             >
-              <WhatsAppIcon className="w-5 h-5" /> WhatsApp Us
+              <WhatsAppIcon className="w-4 h-4 md:w-5 md:h-5" /> 
+              <span className="hidden sm:inline">WhatsApp Us</span>
+              <span className="sm:hidden">Chat</span>
             </a>
           </div>
         </div>
@@ -663,9 +708,28 @@ export default function App() {
               transition={{ duration: 0.6 }}
               className="max-w-2xl"
             >
-              <span className="inline-block py-1 px-3 rounded-full bg-[var(--color-card-tint)] text-[var(--color-electric-blue)] text-sm font-semibold mb-6 border border-[var(--color-electric-blue)]/20">
-                {activeData.badge}
-              </span>
+              <div className="mb-8 p-4 md:p-5 rounded-2xl bg-[#111214]/80 border border-white/10 backdrop-blur-md inline-block w-full sm:w-auto shadow-xl">
+                <p className="text-sm font-semibold mb-4 tracking-wide text-white flex items-center justify-center sm:justify-start gap-2">
+                  <Target className="w-4 h-4 text-[var(--color-electric-blue)]" /> 
+                  CHOOSE YOUR CURRENT PHASE:
+                </p>
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+                  {PHASE_DATA.map((phase, idx) => (
+                    <button
+                      key={phase.id}
+                      onClick={() => setActivePhase(idx)}
+                      className={`w-full sm:w-auto px-5 py-3 rounded-full text-sm transition-all flex items-center justify-center gap-2 ${
+                        activePhase === idx 
+                          ? 'bg-[var(--color-electric-blue)] text-white font-bold shadow-[0_0_20px_rgba(26,171,222,0.6)] border-2 border-[var(--color-electric-blue)] scale-[1.02] sm:scale-105' 
+                          : 'bg-white/5 text-gray-400 font-medium hover:bg-white/10 hover:text-white border border-white/10'
+                      }`}
+                    >
+                      {phase.badge}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
                 {activeData.titlePrefix} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-electric-blue)] to-blue-400">{activeData.titleHighlight}</span>
               </h1>
@@ -680,7 +744,7 @@ export default function App() {
                   Start Your Roadmap <ArrowRight className="w-5 h-5" />
                 </button>
                 <button 
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => openModal(activePhase, 'checklist')}
                   className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white px-8 py-4 rounded-full text-base font-semibold transition-all border border-white/10"
                 >
                   {activeData.leadMagnet.buttonText}
@@ -903,13 +967,13 @@ export default function App() {
               
               <div className="text-[var(--color-electric-blue)] font-bold tracking-widest text-xs uppercase mb-6">★ Founder</div>
               
-              <div className="flex items-center gap-5 mb-6 relative z-10">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border-2 border-[var(--color-electric-blue)] overflow-hidden shrink-0">
-                   <img src="https://picsum.photos/seed/praful/200/200" alt="Praful Patil" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              <div className="flex flex-col sm:flex-row items-center sm:items-center gap-6 mb-8 relative z-10 text-center sm:text-left">
+                <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border-4 border-[var(--color-electric-blue)] overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,163,255,0.3)]">
+                   <img src="https://raw.githubusercontent.com/prafulapatil-stack/Patil-zoho-git/main/public/founder.png" alt="Praful Patil" className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-1">Praful Patil</h3>
-                  <p className="text-gray-400 text-sm">Managing Director</p>
+                  <h3 className="text-3xl font-bold text-white mb-2">Praful Patil</h3>
+                  <p className="text-[var(--color-electric-blue)] font-medium text-base">Managing Director</p>
                 </div>
               </div>
               
@@ -1169,80 +1233,87 @@ export default function App() {
             <p className="text-gray-400 text-lg">Real reviews from our Google My Business page.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                name: "Rajesh Kumar",
-                review: "Patil Investments completely changed how I view my retirement. Their Goal Sheet approach made everything clear and achievable. Highly recommended for anyone looking for a trustworthy mutual fund distributor.",
-                rating: 5
-              },
-              {
-                name: "Sneha Desai",
-                review: "I was worried about the 'Retirement Gap' until I had my Discovery Call. They provided a custom roadmap that gave me immense confidence. Professional, transparent, and truly caring about their clients' financial well-being.",
-                rating: 5
-              },
-              {
-                name: "Amit Sharma",
-                review: "Excellent service and deep market knowledge. They don't just sell products; they educate you on the 'why' behind every investment. The SWP strategy for my post-retirement phase has been working flawlessly.",
-                rating: 5
-              }
-            ].map((testimonial, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="bg-[var(--color-near-black)] border border-white/10 p-8 rounded-2xl relative"
-              >
-                <div className="flex gap-1 mb-6">
-                  {[...Array(testimonial.rating)].map((_, j) => (
-                    <Star key={j} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-6 leading-relaxed">"{testimonial.review}"</p>
-                <div className="flex items-center gap-4 mt-auto">
-                  <div className="w-10 h-10 rounded-full bg-[var(--color-electric-blue)]/20 flex items-center justify-center text-[var(--color-electric-blue)] font-bold">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-bold text-white">{testimonial.name}</div>
-                    <div className="text-xs text-gray-500">Google Review</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <GoogleReviews />
         </div>
       </section>
 
-      {/* Lead Generator */}
+      {/* Free Resources Section */}
       <section id="resources" className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[var(--color-electric-blue)]/5" />
         <div className="container mx-auto px-4 relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto bg-[var(--color-near-black)] border border-[var(--color-electric-blue)]/30 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 shadow-[0_0_50px_rgba(26,171,222,0.1)]"
-          >
-            <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl font-bold mb-4">{activeData.leadMagnet.title}</h2>
-              <p className="text-gray-400 mb-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">Client Resource Center</h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Select your current phase to access tailored checklists and interactive guides.
+            </p>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            {PHASE_DATA.map((phase, idx) => (
+              <button
+                key={phase.id}
+                onClick={() => setActivePhase(idx)}
+                className={`px-6 py-3 rounded-full text-sm font-bold transition-all ${
+                  activePhase === idx 
+                    ? 'bg-[var(--color-electric-blue)] text-white shadow-[0_0_20px_rgba(26,171,222,0.3)]' 
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
+                }`}
+              >
+                {phase.id === 'builder' ? 'The Builder' : phase.id === 'transitioner' ? 'The Transitioner' : 'The Liver'}
+              </button>
+            ))}
+          </div>
+
+          {/* Resources for Active Phase */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Checklist Card */}
+            <motion.div 
+              key={`checklist-${activePhase}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="bg-[var(--color-near-black)] border border-white/10 hover:border-[var(--color-electric-blue)]/50 rounded-3xl p-8 flex flex-col items-center text-center transition-all group shadow-2xl"
+            >
+              <div className="w-16 h-16 bg-[var(--color-electric-blue)]/10 rounded-full flex items-center justify-center mb-6 text-[var(--color-electric-blue)] group-hover:scale-110 transition-transform">
+                <CheckCircle2 size={32} />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">{activeData.leadMagnet.title}</h3>
+              <p className="text-gray-400 mb-8 flex-1">
                 {activeData.leadMagnet.desc}
               </p>
               <button 
-                onClick={() => setIsModalOpen(true)}
-                className="w-full sm:w-auto bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white px-8 py-4 rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2 mx-auto md:mx-0"
+                onClick={() => openModal(activePhase, 'checklist')}
+                className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2"
               >
                 <Download className="w-5 h-5" /> {activeData.leadMagnet.buttonText}
               </button>
-            </div>
-            <div className="w-full md:w-1/3 aspect-square bg-gradient-to-br from-[var(--color-electric-blue)]/20 to-transparent rounded-2xl border border-[var(--color-electric-blue)]/20 flex items-center justify-center">
-              <CheckCircle2 className="w-24 h-24 text-[var(--color-electric-blue)]/50" />
-            </div>
-          </motion.div>
+            </motion.div>
+
+            {/* Presentation Card */}
+            <motion.div 
+              key={`presentation-${activePhase}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="bg-[var(--color-near-black)] border border-[var(--color-electric-blue)]/30 rounded-3xl p-8 flex flex-col items-center text-center transition-all group shadow-[0_0_30px_rgba(26,171,222,0.1)] relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-[var(--color-electric-blue)]"></div>
+              <div className="w-16 h-16 bg-[var(--color-electric-blue)]/10 rounded-full flex items-center justify-center mb-6 text-[var(--color-electric-blue)] group-hover:scale-110 transition-transform">
+                <FileText size={32} />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">{activeData.presentation.title}</h3>
+              <p className="text-gray-400 mb-8 flex-1">
+                {activeData.presentation.desc}
+              </p>
+              <button 
+                onClick={() => openModal(activePhase, 'presentation')}
+                className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white px-8 py-4 rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2"
+              >
+                {activeData.presentation.buttonText} <ArrowRight className="w-5 h-5" />
+              </button>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -1402,7 +1473,7 @@ export default function App() {
       )}
 
       {/* Lead Magnet Modal */}
-      {isModalOpen && (
+      {modalConfig.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -1411,7 +1482,7 @@ export default function App() {
           >
             <button 
               onClick={() => {
-                setIsModalOpen(false);
+                setModalConfig({ ...modalConfig, isOpen: false });
                 setIsSuccess(false);
                 setModalStep(1);
                 setChecklistAnswers({});
@@ -1424,11 +1495,11 @@ export default function App() {
             {!isSuccess ? (
               modalStep === 1 ? (
                 <>
-                  <h3 className="text-2xl font-bold mb-2">Interactive {activeData.leadMagnet.pdfSubtitle}</h3>
+                  <h3 className="text-2xl font-bold mb-2">Interactive {activeModalData.leadMagnet.pdfSubtitle}</h3>
                   <p className="text-gray-400 mb-4 text-sm">Please answer a few quick questions so we can personalize our discussion.</p>
                   
                   <div className="max-h-[50vh] overflow-y-auto pr-2 space-y-4 custom-scrollbar mb-6">
-                    {activeData.leadMagnet.points.map((point, idx) => (
+                    {activeModalData.leadMagnet.points.map((point, idx) => (
                       <div key={idx} className="bg-white/5 p-4 rounded-lg border border-white/10">
                         <p className="text-sm text-gray-300 mb-3">{idx + 1}. {point}</p>
                         <div className="flex gap-6">
@@ -1457,23 +1528,42 @@ export default function App() {
                     ))}
                   </div>
                   
-                  <button 
-                    onClick={() => setModalStep(2)}
-                    className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    Next: Get My Guide <ArrowRight className="w-4 h-4" />
-                  </button>
+                  <div className="flex flex-col gap-3">
+                    <button 
+                      onClick={() => setModalStep(2)}
+                      className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      Next: Get My Guide <ArrowRight className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setChecklistAnswers({});
+                        setModalStep(2);
+                      }}
+                      className="w-full bg-transparent hover:bg-white/5 text-gray-400 hover:text-white font-medium py-2 rounded-lg transition-colors text-sm"
+                    >
+                      Skip checklist and download directly
+                    </button>
+                  </div>
                 </>
               ) : (
                 <>
-                  <button 
-                    onClick={() => setModalStep(1)} 
-                    className="text-sm text-gray-400 hover:text-white mb-4 flex items-center gap-1 transition-colors"
-                  >
-                    <ArrowLeft className="w-4 h-4"/> Back to Checklist
-                  </button>
-                  <h3 className="text-2xl font-bold mb-2">Where should we send your guide?</h3>
-                  <p className="text-gray-400 mb-6 text-sm">Enter your details below and we'll email your personalized guide instantly.</p>
+                  {modalConfig.resourceType === 'checklist' && (
+                    <button 
+                      onClick={() => setModalStep(1)} 
+                      className="text-sm text-gray-400 hover:text-white mb-4 flex items-center gap-1 transition-colors"
+                    >
+                      <ArrowLeft className="w-4 h-4"/> Back to Checklist
+                    </button>
+                  )}
+                  <h3 className="text-2xl font-bold mb-2">
+                    {modalConfig.resourceType === 'checklist' ? 'Where should we send your guide?' : 'Unlock Presentation'}
+                  </h3>
+                  <p className="text-gray-400 mb-6 text-sm">
+                    {modalConfig.resourceType === 'checklist' 
+                      ? "Enter your details below and we'll email your personalized guide instantly."
+                      : "Enter your details to access this interactive presentation."}
+                  </p>
                   
                   <form onSubmit={handleLeadSubmit} className="space-y-4">
                     <div>
@@ -1520,7 +1610,7 @@ export default function App() {
                       disabled={isSubmitting}
                       className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors mt-6 disabled:opacity-70 flex items-center justify-center gap-2"
                     >
-                      {isSubmitting ? 'Sending...' : 'Submit & Send to my Email'}
+                      {isSubmitting ? 'Processing...' : (modalConfig.resourceType === 'checklist' ? 'Submit & Send to my Email' : 'Unlock Presentation')}
                     </button>
                     <p className="text-xs text-gray-500 text-center mt-4">
                       By downloading, you agree to receive communications from Patil Investments. We respect your privacy.
@@ -1533,21 +1623,41 @@ export default function App() {
                 <div className="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-bold mb-2">Thank You!</h3>
-                <p className="text-gray-400 mb-6 text-sm">Your checklist responses have been submitted successfully.</p>
+                <h3 className="text-2xl font-bold mb-2">Success!</h3>
+                <p className="text-gray-400 mb-6 text-sm">
+                  {modalConfig.resourceType === 'checklist' 
+                    ? "Your personalized checklist has been sent to your email."
+                    : "You now have access to the interactive presentation."}
+                </p>
                 
-                <button
-                  type="button"
-                  onClick={() => handleDownloadPDF(activePhase)}
-                  className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors mb-3 flex items-center justify-center gap-2"
-                >
-                  <Download className="w-5 h-5" /> Download Guide Now
-                </button>
+                {modalConfig.resourceType === 'checklist' ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleDownloadPDF(modalConfig.phaseId);
+                      setModalConfig({ ...modalConfig, isOpen: false });
+                    }}
+                    className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors mb-3 flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-5 h-5" /> Download Guide Now
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setModalConfig({ ...modalConfig, isOpen: false });
+                      setCurrentView(activeModalData.presentation.componentId as any);
+                    }}
+                    className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors mb-3 flex items-center justify-center gap-2"
+                  >
+                    Open Presentation <ArrowRight className="w-5 h-5" />
+                  </button>
+                )}
 
                 <button
                   type="button"
                   onClick={() => {
-                    setIsModalOpen(false);
+                    setModalConfig({ ...modalConfig, isOpen: false });
                     setIsSuccess(false);
                     setModalStep(1);
                     setChecklistAnswers({});
