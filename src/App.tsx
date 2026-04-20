@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'motion/react';
-import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldAlert, ChevronDown, BarChart3, PieChart, Users, ShieldCheck, Compass, Route, LineChart, Linkedin, Instagram, Facebook, Star, X, Calculator, LogIn, ArrowUp, ArrowLeft, Target, History, Award, Shield, Building, Briefcase, Landmark, MessageCircle, FileText } from 'lucide-react';
+import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldAlert, ChevronDown, BarChart3, PieChart, Users, User, ShieldCheck, Compass, Route, LineChart, Linkedin, Instagram, Facebook, Star, X, Calculator, LogIn, ArrowUp, ArrowLeft, Target, History, Award, Shield, Building, Briefcase, Landmark, MessageCircle, FileText } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { GoogleReviews } from './components/GoogleReviews';
 import Library from './presentations/Library';
@@ -974,8 +974,17 @@ export default function App() {
               <div className="text-[var(--color-electric-blue)] font-bold tracking-widest text-xs uppercase mb-6">★ Founder</div>
               
               <div className="flex flex-col sm:flex-row items-center sm:items-center gap-6 mb-8 relative z-10 text-center sm:text-left">
-                <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border-4 border-[var(--color-electric-blue)] overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,163,255,0.3)]">
-                   <img src="/founder.png" alt="Praful Patil" className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" />
+                <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border-4 border-[var(--color-electric-blue)] overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,163,255,0.3)] flex items-center justify-center relative">
+                   <img 
+                     src="/founder.png" 
+                     alt="Praful Patil" 
+                     className="w-full h-full object-cover object-top absolute z-10" 
+                     referrerPolicy="no-referrer"
+                     onError={(e) => {
+                       e.currentTarget.style.display = 'none';
+                     }}
+                   />
+                   <User className="w-16 h-16 text-gray-500 absolute z-0" />
                 </div>
                 <div>
                   <h3 className="text-3xl font-bold text-white mb-2">Praful Patil</h3>
