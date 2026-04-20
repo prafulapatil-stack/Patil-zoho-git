@@ -280,15 +280,40 @@ export default function App() {
         descriptionText += `\nDirect Download Link: ${downloadLink}\n`;
       }
 
+      // Determine the precise Lead Source string required by the CRM drop-down
+      let exactLeadSourceString = 'Website Lead Magnet - ';
+      if (activeModalData.titleHighlight.includes('Wealth Creation')) {
+        exactLeadSourceString = 'Website Lead Magnet - Wealth Creation';
+      } else if (activeModalData.titleHighlight.includes('Retirement Bridge')) {
+        exactLeadSourceString = 'Website Lead Magnet - Retirement Bridge';
+      } else if (activeModalData.titleHighlight.includes('Lifestyle Continuity')) {
+        exactLeadSourceString = 'Website Lead Magnet - Lifestyle Continuity';
+      } else {
+        exactLeadSourceString += activeModalData.titleHighlight;
+      }
+
+      // Map the tracking ID specifically to the correct Lead Source based on the generated forms
+      let currentXn = '474fbc86e812866253e529d7cb8a90921c99486a48634ad55fa76cec90823ab9'; // Default (Wealth Creation)
+      let currentXm = 'a64d77c5287d0422b655ae6d1934d3fe34a437c8caa81e48283da04cca0091cfe17fabfa495ef0dc8bc59914330c8987';
+      
+      if (exactLeadSourceString === 'Website Lead Magnet - Retirement Bridge') {
+        currentXn = 'c694091a0e39edfeaf5e268b671091be5f069d1a36bb656242c207720fd6e31c';
+        currentXm = '64e235e7e17f7f1ccdbfa3d6e4d3a24f4ca0cd423608da2145718891687220d2bcbcb95600a3906a413e03a13e6583b4';
+      } else if (exactLeadSourceString === 'Website Lead Magnet - Lifestyle Continuity') {
+        currentXn = '69510bf50127704aa9357d916158f67126fa021b345978a5c9f77e6a4933169a';
+        currentXm = '6c3a9efe505f68dd280b45dbb6a79b31b03316bc1f8a6ac391f49fe6a8fc95262a8888eb09101ac51cbe514bb06a9609';
+      }
+
       const fields = {
-        'xnQsjsdp': '7945e88275acbdff6906428a27d78af09bac2e1a6dd9afb203d48b78eae5d9d9',
-        'xmIwtLD': 'ea2afd6b00a46c26ef28363adc7356799ba6fb790f629a83bf8586356b7c3cd7755e5758ef15f4d6a49e4100df28f18e',
+        'xnQsjsdp': currentXn,
+        'xmIwtLD': currentXm,
         'actionType': 'TGVhZHM=',
         'returnURL': 'https://patilinvestments.zohosites.in',
-        'Last Name': formData.name,
-        'Mobile': '+91' + formData.phone,
+        'Company': 'Website Request', // Kept for safety in case Zoho requires it globally
+        'Last Name': formData.name || 'Unknown',
+        'Mobile': formData.phone,
         'Email': formData.email,
-        'Lead Source': 'Website Lead Magnet - ' + activeModalData.titleHighlight,
+        'Lead Source': exactLeadSourceString,
         'Description': descriptionText,
       };
 
