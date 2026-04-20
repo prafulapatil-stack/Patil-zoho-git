@@ -16,6 +16,18 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const AppleIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.68.727-1.303 2.181-1.11 3.559 1.343.104 2.584-.533 3.397-1.547z"/>
+  </svg>
+);
+
+const PlayStoreIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M16.947 11.233L3.104.28C2.86.09 2.553 0 2.22 0C1.547 0 1 .547 1 1.22v21.56C1 23.453 1.547 24 2.22 24c.333 0 .64-.09-.884-.28l13.843-10.953a1.493 1.493 0 0 0 0-2.354c-.218-.172-1.745-1.38-1.745-1.38zM3.44 2.827l10.985 8.706-5.46 5.46L3.44 2.827zm14.653 10.34a.488.488 0 0 1 0 .76l-2.08 1.645-3.045-3.045 3.045-3.045 2.08 1.645zm-6.19-2.32L9.36 8.303l5.08-5.08 2.015 1.595-4.552 6.03zm-4.507 8.85l2.543-2.543 2.016 1.596L3.44 21.173l5.955-2.476z"/>
+  </svg>
+);
+
 const PHASE_DATA = [
   {
     id: "builder",
@@ -667,20 +679,14 @@ export default function App() {
               <span className="text-xs text-[var(--color-electric-blue)] font-medium uppercase tracking-wider mt-0.5">AMFI-Registered<br/>Mutual Fund Distributor</span>
             </div>
           </div>
-          <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-300">
-            <a href="#journey" className="hover:text-[var(--color-electric-blue)] transition-colors">Your Journey</a>
-            <a href="#plan" className="hover:text-[var(--color-electric-blue)] transition-colors">3-Step Plan</a>
-            <a href="#resources" className="hover:text-[var(--color-electric-blue)] transition-colors">Free Resources</a>
-            <button onClick={() => setCurrentView('library')} className="hover:text-[var(--color-electric-blue)] transition-colors cursor-pointer">Lead Magnet Library</button>
-          </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
             <a 
               href="https://login.patilinvestments.co.in/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="hidden md:flex items-center gap-2 text-gray-300 hover:text-white text-sm font-medium transition-colors"
+              className="flex items-center gap-1.5 sm:gap-2 text-gray-300 hover:text-white text-xs sm:text-sm font-medium transition-colors border border-white/10 sm:border-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none bg-white/5 sm:bg-transparent"
             >
-              <LogIn className="w-4 h-4" /> Client Login
+              <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Client Login</span><span className="sm:hidden">Login</span>
             </a>
             <a 
               href="https://wa.me/919137776263" 
@@ -969,7 +975,7 @@ export default function App() {
               
               <div className="flex flex-col sm:flex-row items-center sm:items-center gap-6 mb-8 relative z-10 text-center sm:text-left">
                 <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border-4 border-[var(--color-electric-blue)] overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,163,255,0.3)]">
-                   <img src="https://raw.githubusercontent.com/prafulapatil-stack/Patil-zoho-git/main/public/founder.png" alt="Praful Patil" className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" />
+                   <img src="/founder.png" alt="Praful Patil" className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" />
                 </div>
                 <div>
                   <h3 className="text-3xl font-bold text-white mb-2">Praful Patil</h3>
@@ -1415,6 +1421,11 @@ export default function App() {
               </div>
               <div className="flex flex-col items-center md:items-end gap-6">
                 <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-gray-400">
+                  <a href="#journey" className="hover:text-white transition-colors">Your Journey</a>
+                  <a href="#plan" className="hover:text-white transition-colors">3-Step Plan</a>
+                  <a href="#resources" className="hover:text-white transition-colors">Free Resources</a>
+                  <button onClick={() => setCurrentView('library')} className="hover:text-white transition-colors cursor-pointer">Client Resource Center</button>
+                  <span className="hidden md:inline text-white/20">|</span>
                   <a href="#" className="hover:text-white transition-colors">About Us</a>
                   <a href="#zoho-calculator-link" className="hover:text-white transition-colors">Goal Calculator</a>
                   <a href="#" className="hover:text-white transition-colors">Contact</a>
@@ -1430,6 +1441,34 @@ export default function App() {
                   </a>
                   <a href="https://www.facebook.com/patilinvestments.co.in" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-electric-blue)] transition-colors" aria-label="Facebook">
                     <Facebook className="w-5 h-5" />
+                  </a>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-white/10 w-full md:w-auto">
+                  <p className="text-xs text-gray-400 w-full text-center md:hidden mb-1">Download our App:</p>
+                  <a 
+                    href="https://play.google.com/store/apps/details?id=com.patil_investments.client&hl=en_IN"
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg transition-colors group"
+                  >
+                    <PlayStoreIcon className="w-6 h-6 group-hover:text-green-500 transition-colors" />
+                    <div className="flex flex-col text-left">
+                      <span className="text-[10px] uppercase text-gray-400 leading-none">Get it on</span>
+                      <span className="text-sm font-semibold text-white leading-tight">Google Play</span>
+                    </div>
+                  </a>
+                  <a 
+                    href="https://apps.apple.com/in/app/wylth/id6456452937"
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg transition-colors group"
+                  >
+                    <AppleIcon className="w-6 h-6 group-hover:text-gray-300 transition-colors" />
+                    <div className="flex flex-col text-left">
+                      <span className="text-[10px] uppercase text-gray-400 leading-none">Download on the</span>
+                      <span className="text-sm font-semibold text-white leading-tight">App Store</span>
+                    </div>
                   </a>
                 </div>
               </div>
