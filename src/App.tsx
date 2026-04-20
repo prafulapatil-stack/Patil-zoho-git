@@ -920,7 +920,7 @@ export default function App() {
           >
             <div className="text-[var(--color-electric-blue)] font-bold tracking-widest text-xs uppercase mb-4">★ Our Philosophy</div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Three Principles That Shape Every Conversation.</h2>
-            <p className="text-gray-400 text-lg">Most financial advisors talk about returns. We talk about your life. Here's what we believe — and what we'll never compromise on.</p>
+            <p className="text-gray-400 text-lg">Most mutual fund distributors talk about returns. We talk about your life. Here's what we believe — and what we'll never compromise on.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
