@@ -309,7 +309,6 @@ export default function App() {
         'xmIwtLD': currentXm,
         'actionType': 'TGVhZHM=',
         'returnURL': 'https://patilinvestments.zohosites.in',
-        'Company': 'Website Request', // Kept for safety in case Zoho requires it globally
         'Last Name': formData.name || 'Unknown',
         'Mobile': formData.phone,
         'Email': formData.email,
