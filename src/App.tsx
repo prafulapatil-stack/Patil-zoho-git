@@ -708,7 +708,7 @@ export default function App() {
               href="https://login.patilinvestments.co.in/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 sm:gap-2 text-gray-300 hover:text-white text-xs sm:text-sm font-medium transition-colors border border-white/10 sm:border-transparent px-3 py-1.5 sm:px-0 sm:py-0 rounded-full sm:rounded-none bg-white/5 sm:bg-transparent"
+              className="flex items-center gap-1.5 sm:gap-2 text-white text-xs sm:text-sm font-semibold transition-all border border-[var(--color-electric-blue)] bg-[var(--color-electric-blue)]/10 hover:bg-[var(--color-electric-blue)] px-4 py-2 rounded-full shadow-[0_0_10px_rgba(26,171,222,0.2)] hover:shadow-[0_0_20px_rgba(26,171,222,0.4)]"
             >
               <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Client Login</span><span className="sm:hidden">Login</span>
             </a>
@@ -716,9 +716,9 @@ export default function App() {
               href="https://wa.me/919137776263" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-1 md:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 py-2 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-bold transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)] hover:shadow-[0_0_25px_rgba(37,211,102,0.5)] hover:-translate-y-0.5"
+              className="flex items-center gap-1.5 sm:gap-2 text-white text-xs sm:text-sm font-semibold transition-all border border-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366] px-4 py-2 rounded-full shadow-[0_0_10px_rgba(37,211,102,0.2)] hover:shadow-[0_0_20px_rgba(37,211,102,0.4)]"
             >
-              <WhatsAppIcon className="w-4 h-4 md:w-5 md:h-5" /> 
+              <WhatsAppIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> 
               <span className="hidden sm:inline">WhatsApp Us</span>
               <span className="sm:hidden">Chat</span>
             </a>
