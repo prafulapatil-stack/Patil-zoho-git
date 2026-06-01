@@ -728,7 +728,38 @@ export default function App() {
 
       {/* Hero Section */}
       <section id="hero" className="relative pt-12 pb-16 md:pt-16 md:pb-24 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,171,222,0.15),transparent_50%)]" />
+        {/* Floating Ambient Background Layers */}
+        <motion.div 
+          animate={{
+            y: [0, -12, 0],
+            x: [0, 8, 0],
+            scale: [1, 1.03, 1]
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut"
+          }}
+          className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,171,222,0.18),transparent_55%)] pointer-events-none" 
+        />
+        <motion.div 
+          animate={{
+            y: [0, 15, 0],
+            x: [0, -10, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+            delay: 1
+          }}
+          className="absolute -left-20 bottom-10 w-96 h-96 bg-[var(--color-electric-blue)]/5 rounded-full blur-[100px] pointer-events-none" 
+        />
+        {/* Subtle high-fidelity grid pattern over the background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+        
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div

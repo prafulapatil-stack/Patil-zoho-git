@@ -35,8 +35,8 @@ export const GoogleReviews = () => {
 
   useEffect(() => {
     const fetchGoogleReviews = async () => {
-      const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
-      const placeId = import.meta.env.VITE_GOOGLE_PLACE_ID;
+      const apiKey = (import.meta as any).env.VITE_GOOGLE_PLACES_API_KEY;
+      const placeId = (import.meta as any).env.VITE_GOOGLE_PLACE_ID;
 
       if (!apiKey || !placeId) {
         console.log("Google Places API Key or Place ID not found. Using fallback reviews.");
