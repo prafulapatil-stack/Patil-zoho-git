@@ -205,7 +205,7 @@ export default function App() {
         return 2;
       }
     }
-    return 1; // Default
+    return 1; // Default to Retirement Bridge
   });
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
@@ -235,16 +235,22 @@ export default function App() {
       }
     };
 
+    window.addEventListener('popstate', handleUrlRoute);
     window.addEventListener('hashchange', handleUrlRoute);
-    return () => window.removeEventListener('hashchange', handleUrlRoute);
+    return () => {
+      window.removeEventListener('popstate', handleUrlRoute);
+      window.removeEventListener('hashchange', handleUrlRoute);
+    };
   }, []);
 
   useEffect(() => {
     const paths = ['builder', 'retirement-bridge', 'lifestyle-continuity'];
+    const currentPath = window.location.pathname.toLowerCase();
     const currentHash = window.location.hash.toLowerCase();
     const targetPath = paths[activePhase];
-    if (!currentHash.includes(targetPath)) {
-      window.history.replaceState(null, '', `#/${targetPath}`);
+    
+    if (!currentPath.endsWith(`/${targetPath}`) && !currentHash.includes(targetPath)) {
+      window.history.pushState(null, '', `/${targetPath}`);
     }
   }, [activePhase]);
 

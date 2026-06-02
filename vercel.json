@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/builder", "destination": "/index.html" },
+    { "source": "/retirement-bridge", "destination": "/index.html" },
+    { "source": "/transitioner", "destination": "/index.html" },
+    { "source": "/lifestyle-continuity", "destination": "/index.html" },
+    { "source": "/liver", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
