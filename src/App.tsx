@@ -193,7 +193,20 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
 
 export default function App() {
   const [currentView, setCurrentView] = useState<'main' | 'library' | 'sip' | 'liver' | 'transition'>('main');
-  const [activePhase, setActivePhase] = useState(1);
+  const [activePhase, setActivePhase] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path.includes('/builder') || hash.includes('builder')) {
+        return 0;
+      } else if (path.includes('/retirement-bridge') || hash.includes('retirement-bridge') || path.includes('/transitioner') || hash.includes('transitioner')) {
+        return 1;
+      } else if (path.includes('/lifestyle-continuity') || hash.includes('lifestyle-continuity') || path.includes('/liver') || hash.includes('liver')) {
+        return 2;
+      }
+    }
+    return 1; // Default
+  });
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
     phaseId: number;
@@ -207,6 +220,33 @@ export default function App() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [modalStep, setModalStep] = useState(1);
   const [checklistAnswers, setChecklistAnswers] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    const handleUrlRoute = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      
+      if (path.includes('/builder') || hash.includes('builder')) {
+        setActivePhase(0);
+      } else if (path.includes('/retirement-bridge') || hash.includes('retirement-bridge') || path.includes('/transitioner') || hash.includes('transitioner')) {
+        setActivePhase(1);
+      } else if (path.includes('/lifestyle-continuity') || hash.includes('lifestyle-continuity') || path.includes('/liver') || hash.includes('liver')) {
+        setActivePhase(2);
+      }
+    };
+
+    window.addEventListener('hashchange', handleUrlRoute);
+    return () => window.removeEventListener('hashchange', handleUrlRoute);
+  }, []);
+
+  useEffect(() => {
+    const paths = ['builder', 'retirement-bridge', 'lifestyle-continuity'];
+    const currentHash = window.location.hash.toLowerCase();
+    const targetPath = paths[activePhase];
+    if (!currentHash.includes(targetPath)) {
+      window.history.replaceState(null, '', `#/${targetPath}`);
+    }
+  }, [activePhase]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -272,12 +312,84 @@ export default function App() {
       let descriptionText = `Resource Requested: ${modalConfig.resourceType === 'checklist' ? activeModalData.leadMagnet.pdfSubtitle : activeModalData.presentation.title}\n\n`;
       
       if (modalConfig.resourceType === 'checklist') {
-        descriptionText += `Checklist Responses:\n`;
+        const totalScore = Object.values(checklistAnswers).filter(v => v === true).length;
+        const formattedDate = (() => {
+          const d = new Date();
+          const pad = (n: number) => n.toString().padStart(2, '0');
+          const day = pad(d.getDate());
+          const month = pad(d.getMonth() + 1);
+          const year = d.getFullYear();
+          let hours = d.getHours();
+          const minutes = pad(d.getMinutes());
+          const seconds = pad(d.getSeconds());
+          const ampm = hours >= 12 ? 'pm' : 'am';
+          hours = hours % 12;
+          hours = hours === 0 ? 12 : hours;
+          return `${day}/${month}/${year}, ${pad(hours)}:${minutes}:${seconds} ${ampm}`;
+        })();
+
+        let phaseName = 'BUILDER';
+        let shortQuestionMap: Record<number, string> = {};
+
+        if (modalConfig.phaseId === 0) {
+          phaseName = 'BUILDER';
+          shortQuestionMap = {
+            0: "Emergency Fund (6+ months)",
+            1: "Term Insurance (10-15× income)",
+            2: "Investing ≥ 20% of Income",
+            3: "Goal-Mapped SIPs",
+            4: "High-Growth Equity Weight",
+            5: "Automated SIP Execution",
+            6: "Tax-Savings Maximize (ELSS)",
+            7: "No High-Interest Debt",
+            8: "Annual SIP Step-Up",
+            9: "Annual Wealth Review"
+          };
+        } else if (modalConfig.phaseId === 1) {
+          phaseName = 'RETIREMENT BRIDGE';
+          shortQuestionMap = {
+            0: "Retirement Gap Calculated",
+            1: "Portfolio Diversified",
+            2: "Equity-to-Debt Gradual Shift",
+            3: "Clear SWP Strategy Planned",
+            4: "Healthcare Inflation Accounted",
+            5: "Investments Consolidated",
+            6: "Tax-Optimized Withdrawal Setup",
+            7: "Estate Nominees & Succession",
+            8: "Separate Cash Reserve",
+            9: "Annual Goal Sheet Audit"
+          };
+        } else {
+          phaseName = 'LIFESTYLE CONTINUITY';
+          shortQuestionMap = {
+            0: "Withdrawal Rate < 6% Limit",
+            1: "Healthcare Inflation (10%+)",
+            2: "All Nominations Handled",
+            3: "Active Estate Plan / Will",
+            4: "Cash Bucket (2-yr Reserve)",
+            5: "Tax-Efficient Dynamic SWP",
+            6: "Growth Bucket (Inflation Cover)",
+            7: "Low-Risk Core Corpus",
+            8: "Independent Medical Coverage",
+            9: "Annual Sustainability Audit"
+          };
+        }
+
+        descriptionText = `=== ${phaseName} SCORECARD RESULTS ===\n`;
+        descriptionText += `Total Score: ${totalScore} / 10\n`;
+        descriptionText += `Submitted: ${formattedDate}\n\n`;
+        descriptionText += `--- ANSWERS ---\n`;
+
         activeModalData.leadMagnet.points.forEach((point, idx) => {
-          const answer = checklistAnswers[idx] !== undefined ? (checklistAnswers[idx] ? 'Yes' : 'No') : 'Not Answered';
-          descriptionText += `${idx + 1}. ${point} - ${answer}\n`;
+          const isYes = checklistAnswers[idx] === true;
+          const statusChar = isYes ? '✓' : '✗';
+          const shortQuestion = shortQuestionMap[idx] || point;
+          const answerStr = isYes ? 'Yes' : 'No';
+          descriptionText += `${statusChar} Q${idx + 1}: ${shortQuestion} — ${answerStr}\n`;
         });
-        descriptionText += `\nDirect Download Link: ${downloadLink}\n`;
+
+        descriptionText += `\nLead Source: Website Scorecard - ${phaseName === 'BUILDER' ? 'Builder' : phaseName === 'RETIREMENT BRIDGE' ? 'Retirement Bridge' : 'Lifestyle Continuity'}\n`;
+        descriptionText += `Patil Investments | ARN-143723\n`;
       }
 
       // Determine the precise Lead Source string required by the CRM drop-down
@@ -293,15 +405,15 @@ export default function App() {
       }
 
       // Map the tracking ID specifically to the correct Lead Source based on the generated forms
-      let currentXn = '474fbc86e812866253e529d7cb8a90921c99486a48634ad55fa76cec90823ab9'; // Default (Wealth Creation)
-      let currentXm = 'a64d77c5287d0422b655ae6d1934d3fe34a437c8caa81e48283da04cca0091cfe17fabfa495ef0dc8bc59914330c8987';
+      let currentXn = '0906caa662b130a61eed771b85523d4988b2db7f60fa5e0e0ed4fa255268cd46'; // Builder / Wealth Creation (Default)
+      let currentXm = 'b9b1a55f52e5410f33d1c96c72627205c2e2b42fec52ab4d224cea8bb33584875d14f0751639693de5cc3866777d5b53';
       
       if (exactLeadSourceString === 'Website Lead Magnet - Retirement Bridge') {
-        currentXn = 'c694091a0e39edfeaf5e268b671091be5f069d1a36bb656242c207720fd6e31c';
-        currentXm = '64e235e7e17f7f1ccdbfa3d6e4d3a24f4ca0cd423608da2145718891687220d2bcbcb95600a3906a413e03a13e6583b4';
+        currentXn = 'e03d9be7c5b14fd7dc6199f72cf396a3e1a11ce33ce4485162abdd986d11cc56';
+        currentXm = '5487be6fed06ff15f9d06088cb13b79ece59a037b406eefb55df9ce2ef880645f855641b79b1aaa24a75be8b43489b2c';
       } else if (exactLeadSourceString === 'Website Lead Magnet - Lifestyle Continuity') {
-        currentXn = '69510bf50127704aa9357d916158f67126fa021b345978a5c9f77e6a4933169a';
-        currentXm = '6c3a9efe505f68dd280b45dbb6a79b31b03316bc1f8a6ac391f49fe6a8fc95262a8888eb09101ac51cbe514bb06a9609';
+        currentXn = '1d00e9bc878ba2befb32c1b5fd517e83b999d62e81e9e8ef7b7951d5b940bd3e';
+        currentXm = 'b2458abbda540caa1a9d295d3a3001d1eaf16d21211e30cf2f3ebcaaa705aba5b061bf61143cc59f5b188131c08b0988';
       }
 
       const fields = {
@@ -314,6 +426,7 @@ export default function App() {
         'Email': formData.email,
         'Lead Source': exactLeadSourceString,
         'Description': descriptionText,
+        'description': descriptionText, // Adding lowercase fallback to protect fields flow
       };
 
       Object.entries(fields).forEach(([k, v]) => {
