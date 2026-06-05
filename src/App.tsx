@@ -28,6 +28,19 @@ const PlayStoreIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const BUILDER_COLS = [
+  { key: 'q_active_sip', label: 'Active SIP running', yesInsight: 'Great — your Rice & Roti is on the plate. Keep it growing.', noInsight: 'No SIP means no compounding. Starting at even ₹5,000/month today changes your retirement picture significantly.', question: 'Do you have an active SIP running?' },
+  { key: 'q_sip_stepup', label: 'SIP increased last 12 months', yesInsight: 'Excellent habit. Annual step-up is the single most powerful SIP move.', noInsight: 'Flat SIP means inflation shrinks your real investment each year. A 10% step-up annually adds lakhs by retirement.', question: 'Have you increased your SIP amount in the last 12 months?' },
+  { key: 'q_term_insurance', label: 'Term insurance in place', yesInsight: 'Your Dal is secured — the family is protected.', noInsight: 'This is your Dal. Without it, one emergency removes everything else from the plate. Priority 1.', question: 'Do you have adequate term life insurance in place?' },
+  { key: 'q_emergency_fund', label: '6-month emergency fund', yesInsight: 'Solid foundation. You won\'t need to break investments in a crisis.', noInsight: 'Without this, any emergency forces you to redeem SIPs at the worst time. Build this before increasing equity.', question: 'Do you have a dedicated 6-month emergency fund?' },
+  { key: 'q_equity_exposure', label: 'Equity exposure above 60%', yesInsight: 'Right amount of spice for your age. Stay invested through volatility.', noInsight: 'At age 30–45 you can and should carry more equity. Lower exposure means lower long-term returns.', question: 'Is your portfolio equity exposure above 60%?' },
+  { key: 'q_retirement_goal', label: 'Retirement corpus goal set', yesInsight: 'You know your Sweet Dish target — now execute the recipe.', noInsight: 'Without a target number, you cannot know if your current SIP is enough. We calculate this in 15 minutes.', question: 'Have you defined a clear target for your retirement corpus goal?' },
+  { key: 'q_tax_saving', label: 'Tax-saving investments planned', yesInsight: 'Smart — tax saved is return earned. Keep this habit each April.', noInsight: 'You are leaving money on the table. Section 80C alone saves ₹46,800 per year at the 30% bracket.', question: 'Are your tax-saving investments planned for the year?' },
+  { key: 'q_nomination', label: 'Will / nomination updated', yesInsight: 'Estate planning lid is on your Thali. Your wealth reaches the right people.', noInsight: 'Your wealth may not reach your family without this. Takes 10 minutes to update in BSE Star.', question: 'Are your nominations and estate planning/Will updated?' },
+  { key: 'q_annual_review', label: 'Annual portfolio review done', yesInsight: 'Rebalancing keeps your Thali balanced. Good discipline.', noInsight: 'Without annual review your allocation drifts and risk increases without you noticing.', question: 'Have you completed an annual portfolio review in the last 12 months?' },
+  { key: 'q_goals_documented', label: 'Investment goals documented', yesInsight: 'Written goals are 40% more likely to be achieved. Strong habit.', noInsight: 'Undocumented goals are wishes. Written goals with timelines become plans.', question: 'Are all your investment goals clearly documented with timelines?' }
+];
+
 const PHASE_DATA = [
   {
     id: "builder",
@@ -49,16 +62,16 @@ const PHASE_DATA = [
       pdfTitle: "WEALTH FOUNDATION",
       pdfSubtitle: "SCORECARD",
       points: [
-        "Do you have an emergency fund covering 6 months of expenses?",
-        "Do you have adequate term life insurance (10-15x annual income)?",
-        "Are you saving at least 20% of your monthly income?",
-        "Are your SIPs mapped to specific goals (e.g., kids' education, retirement)?",
-        "Is your portfolio heavily weighted towards high-growth equity funds?",
-        "Have you automated your investments to avoid emotional decisions?",
-        "Are you maximizing your tax-saving investment options (ELSS, etc.)?",
-        "Are you avoiding high-interest consumer debt?",
-        "Do you increase your SIP amount annually in line with your salary hikes?",
-        "Do you review your portfolio performance with a professional annually?"
+        "Do you have an active SIP running?",
+        "Have you increased your SIP amount in the last 12 months?",
+        "Do you have adequate term life insurance in place?",
+        "Do you have a dedicated 6-month emergency fund?",
+        "Is your portfolio equity exposure above 60%?",
+        "Have you defined a clear target for your retirement corpus goal?",
+        "Are your tax-saving investments planned for the year?",
+        "Are your nominations and estate planning/Will updated?",
+        "Have you completed an annual portfolio review in the last 12 months?",
+        "Are all your investment goals clearly documented with timelines?"
       ]
     },
     presentation: {
@@ -220,6 +233,9 @@ export default function App() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [modalStep, setModalStep] = useState(1);
   const [checklistAnswers, setChecklistAnswers] = useState<Record<number, boolean>>({});
+  const [builderSubmitSuccess, setBuilderSubmitSuccess] = useState(false);
+  const [builderSubmitError, setBuilderSubmitError] = useState(false);
+  const [builderFormData, setBuilderFormData] = useState({ name: '', email: '' });
 
   useEffect(() => {
     const handleUrlRoute = () => {
@@ -288,6 +304,9 @@ export default function App() {
     setModalStep(resourceType === 'checklist' ? 1 : 2);
     setIsSuccess(false);
     setChecklistAnswers({});
+    setBuilderSubmitSuccess(false);
+    setBuilderSubmitError(false);
+    setBuilderFormData({ name: formData.name || '', email: formData.email || '' });
   };
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
@@ -462,6 +481,108 @@ export default function App() {
     } catch (error: any) {
       console.error("Error processing request:", error);
       alert(error.message || "There was an error processing your request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitBuilderForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setBuilderSubmitError(false);
+    setBuilderSubmitSuccess(false);
+
+    try {
+      // Create hidden iframe so form submission doesn't redirect key page
+      let iframe = document.getElementById('zohoSubmitFrameApp') as HTMLIFrameElement;
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = 'zohoSubmitFrameApp';
+        iframe.id = 'zohoSubmitFrameApp';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+
+      // Generate description formatting exactly matching standard rules
+      const formattedDate = (() => {
+        const d = new Date();
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        const day = pad(d.getDate());
+        const month = pad(d.getMonth() + 1);
+        const year = d.getFullYear();
+        let hours = d.getHours();
+        const minutes = pad(d.getMinutes());
+        const seconds = pad(d.getSeconds());
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours === 0 ? 12 : hours;
+        return `${day}/${month}/${year}, ${pad(hours)}:${minutes}:${seconds} ${ampm}`;
+      })();
+
+      const totalScore = BUILDER_COLS.filter((_, idx) => checklistAnswers[idx] === true).length;
+
+      let descriptionText = `=== BUILDER SCORECARD RESULTS ===\n`;
+      descriptionText += `Total Score: ${totalScore} / 10\n`;
+      descriptionText += `Submitted: ${formattedDate} (IST)\n\n`;
+      descriptionText += `--- ANSWERS ---\n`;
+
+      BUILDER_COLS.forEach((col, idx) => {
+        const isYes = checklistAnswers[idx] === true;
+        const statusChar = isYes ? '✓' : '✗';
+        const answerStr = isYes ? 'Yes' : 'No';
+        descriptionText += `${statusChar} Q${idx + 1}: ${col.label} — ${answerStr}\n`;
+      });
+
+      descriptionText += `\nLead Source: Website Scorecard - Builder\n`;
+      descriptionText += `Patil Investments | ARN-143723\n`;
+
+      // Create hidden form targeting the iframe
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://crm.zoho.in/crm/WebToLeadForm';
+      form.acceptCharset = 'UTF-8';
+      form.target = 'zohoSubmitFrameApp';
+      form.style.display = 'none';
+
+      const fields = {
+        'xnQsjsdp': '0906caa662b130a61eed771b85523d4988b2db7f60fa5e0e0ed4fa255268cd46',
+        'xmIwtLD': 'b9b1a55f52e5410f33d1c96c72627205c2e2b42fec52ab4d224cea8bb33584875d14f0751639693de5cc3866777d5b53',
+        'actionType': 'TGVhZHM=',
+        'returnURL': 'https://patilinvestments.zohosites.in',
+        'Last Name': builderFormData.name || 'Unknown',
+        'Email': builderFormData.email,
+        'Lead Source': 'Website Lead Magnet - Wealth Creation', // Core required dropdown mapping
+        'Lead_Source': 'Website Scorecard - Builder', // Dedicated hidden identifier field requested
+        'Scorecard_Score': totalScore.toString(), // Score state matching Zoho expectation
+        'Description': descriptionText,
+        'description': descriptionText // Lowercase protection duplicate
+      };
+
+      Object.entries(fields).forEach(([k, v]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = k;
+        input.value = v || '';
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+
+      // Clean up form
+      setTimeout(() => {
+        if (document.body.contains(form)) {
+          document.body.removeChild(form);
+        }
+      }, 2000);
+
+      // Simple buffer hold
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setBuilderSubmitSuccess(true);
+      
+    } catch (error: any) {
+      console.error("Error submitting Builder scorecard form:", error);
+      setBuilderSubmitError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -1700,7 +1821,11 @@ export default function App() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-[var(--color-near-black)] border border-white/10 p-8 rounded-2xl max-w-md w-full relative"
+            className={`bg-[var(--color-near-black)] border border-white/10 p-6 md:p-8 rounded-2xl w-full relative transition-all duration-300 ${
+              modalConfig.phaseId === 0 && modalConfig.resourceType === 'checklist' && modalStep === 2 
+                ? 'max-w-3xl max-h-[90vh] overflow-y-auto custom-scrollbar' 
+                : 'max-w-md'
+            }`}
           >
             <button 
               onClick={() => {
@@ -1708,6 +1833,9 @@ export default function App() {
                 setIsSuccess(false);
                 setModalStep(1);
                 setChecklistAnswers({});
+                setBuilderSubmitSuccess(false);
+                setBuilderSubmitError(false);
+                setBuilderFormData({ name: '', email: '' });
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-white"
             >
@@ -1769,76 +1897,333 @@ export default function App() {
                   </div>
                 </>
               ) : (
-                <>
-                  {modalConfig.resourceType === 'checklist' && (
-                    <button 
-                      onClick={() => setModalStep(1)} 
-                      className="text-sm text-gray-400 hover:text-white mb-4 flex items-center gap-1 transition-colors"
-                    >
-                      <ArrowLeft className="w-4 h-4"/> Back to Checklist
-                    </button>
-                  )}
-                  <h3 className="text-2xl font-bold mb-2">
-                    {modalConfig.resourceType === 'checklist' ? 'Where should we send your guide?' : 'Unlock Presentation'}
-                  </h3>
-                  <p className="text-gray-400 mb-6 text-sm">
-                    {modalConfig.resourceType === 'checklist' 
-                      ? "Enter your details below and we'll email your personalized guide instantly."
-                      : "Enter your details to access this interactive presentation."}
-                  </p>
-                  
-                  <form onSubmit={handleLeadSubmit} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
-                      <input 
-                        type="text" 
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
-                        placeholder="John Doe"
-                      />
+                modalConfig.phaseId === 0 && modalConfig.resourceType === 'checklist' ? (
+                  <>
+                    <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-4">
+                      <div className="text-left">
+                        <h3 className="text-xl font-bold text-white leading-tight">Your Scorecard Results</h3>
+                        <p className="text-[10px] text-gray-400">Patil Investments | ARN-143723</p>
+                      </div>
+                      <button 
+                        onClick={() => setModalStep(1)} 
+                        className="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition-colors bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/10 shrink-0"
+                      >
+                        <ArrowLeft className="w-3.5 h-3.5"/> Edit Answers
+                      </button>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
-                      <input 
-                        type="email" 
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
-                        placeholder="john@example.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
-                      <div className="flex">
-                        <span className="bg-white/5 border border-white/10 border-r-0 rounded-l-lg px-4 py-3 text-gray-400 flex items-center">
-                          +91
-                        </span>
-                        <input 
-                          type="tel" 
-                          required
-                          pattern="[0-9]{10}"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                          className="w-full bg-black/50 border border-white/10 rounded-r-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
-                          placeholder="9876543210"
-                        />
+
+                    <div className="md:grid md:grid-cols-2 md:gap-6 text-left">
+                      {/* Left Column: Scores, Diagnosis, Priorities */}
+                      <div className="space-y-6">
+                        {/* Score Card */}
+                        <div className="bg-white/5 border border-white/10 p-5 rounded-2xl flex flex-col items-center">
+                          <div className="w-20 h-20 rounded-full border-4 border-[#1AABDE] bg-black/60 flex flex-col items-center justify-center mb-3 shadow-[0_0_20px_rgba(26,171,222,0.3)]">
+                            <span className="font-bold text-2xl text-white leading-none">
+                              {(() => {
+                                const score = BUILDER_COLS.filter((_, idx) => checklistAnswers[idx] === true).length;
+                                return score;
+                              })()}
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-medium">/ 10</span>
+                          </div>
+                          
+                          {(() => {
+                            const score = BUILDER_COLS.filter((_, idx) => checklistAnswers[idx] === true).length;
+                            let bandBgColor = "bg-[#FCEBEB]";
+                            let bandTextColor = "text-[#A32D2D]";
+                            let bandText = "Urgent attention needed";
+                            if (score >= 8) {
+                              bandBgColor = "bg-[#EAF3DE]";
+                              bandTextColor = "text-[#3B6D11]";
+                              bandText = "Excellent readiness";
+                            } else if (score >= 5) {
+                              bandBgColor = "bg-[#FAEEDA]";
+                              bandTextColor = "text-[#854F0B]";
+                              bandText = "Good gaps identified";
+                            }
+                            return (
+                              <div className={`w-full py-2 px-3 rounded-lg text-center font-bold text-xs uppercase tracking-wide ${bandBgColor} ${bandTextColor}`}>
+                                {bandText}
+                              </div>
+                            );
+                          })()}
+                        </div>
+
+                        {/* Thali Diagnosis */}
+                        <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
+                          <h4 className="text-xs font-bold text-white mb-3 uppercase tracking-wider text-left border-b border-white/5 pb-2">Wealth Thali Diagnosis</h4>
+                          <div className="space-y-3">
+                            <div className="flex gap-3 items-start text-left">
+                              <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0 animate-pulse"></span>
+                              <div>
+                                <h5 className="text-[10px] font-bold text-white uppercase tracking-wider leading-none">Dal (Safety Net)</h5>
+                                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                                  {(() => {
+                                    const isEmergencyFund = checklistAnswers[3] === true;
+                                    const isTermInsurance = checklistAnswers[2] === true;
+                                    if (isEmergencyFund && isTermInsurance) {
+                                      return "Your Dal is strong. Safety net secured.";
+                                    } else if (isEmergencyFund || isTermInsurance) {
+                                      return "Your Dal needs attention. One gap in your safety net.";
+                                    } else {
+                                      return "Your Dal is missing. This is the most urgent fix.";
+                                    }
+                                  })()}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-3 items-start text-left">
+                              <span className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 flex-shrink-0 animate-pulse"></span>
+                              <div>
+                                <h5 className="text-[10px] font-bold text-white uppercase tracking-wider leading-none">Rice & Roti (Core SIP)</h5>
+                                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                                  {(() => {
+                                    const isActiveSip = checklistAnswers[0] === true;
+                                    const isStepUp = checklistAnswers[1] === true;
+                                    if (isActiveSip && isStepUp) {
+                                      return "Your Rice & Roti is nourishing and growing.";
+                                    } else if (isActiveSip || isStepUp) {
+                                      return "Your core portfolio needs a step-up.";
+                                    } else {
+                                      return "Your Rice & Roti is missing. Start your SIP today.";
+                                    }
+                                  })()}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-3 items-start text-left">
+                              <span className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0 animate-pulse"></span>
+                              <div>
+                                <h5 className="text-[10px] font-bold text-white uppercase tracking-wider leading-none">Thecha (Spicy Equity)</h5>
+                                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                                  {checklistAnswers[4] === true 
+                                    ? "Right amount of spice for your age." 
+                                    : "More Thecha needed. Increase equity exposure."}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-3 items-start text-left">
+                              <span className="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0 animate-pulse"></span>
+                              <div>
+                                <h5 className="text-[10px] font-bold text-white uppercase tracking-wider leading-none">Sweet Dish (Goal Readiness)</h5>
+                                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                                  {(() => {
+                                    const isRetirementGoal = checklistAnswers[5] === true;
+                                    const isGoalsDocumented = checklistAnswers[9] === true;
+                                    if (isRetirementGoal && isGoalsDocumented) {
+                                      return "Your Sweet Dish target is clear.";
+                                    } else if (isRetirementGoal || isGoalsDocumented) {
+                                      return "Your Sweet Dish needs a defined target.";
+                                    } else {
+                                      return "No Sweet Dish goal set yet. This is where we start.";
+                                    }
+                                  })()}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Top Priority Actions */}
+                        {(() => {
+                          const gaps = BUILDER_COLS.map((col, idx) => ({ ...col, idx })).filter(item => checklistAnswers[item.idx] !== true);
+                          if (gaps.length === 0) {
+                            return (
+                              <div className="bg-green-950/20 border border-green-500/20 p-4 rounded-xl text-center">
+                                <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                                <h5 className="font-bold text-white text-xs">Perfect Score!</h5>
+                                <p className="text-[11px] text-gray-300 mt-1">Excellent job! Your financial house is robustly in order.</p>
+                              </div>
+                            );
+                          }
+                          return (
+                            <div className="space-y-3">
+                              <h4 className="text-xs font-bold text-white uppercase tracking-wider text-left pl-1">Top Priorities For Action</h4>
+                              {gaps.slice(0, 3).map((gap, gIdx) => (
+                                <div key={gap.key} className="bg-red-500/5 border border-red-500/10 p-3 rounded-xl flex gap-3 text-left">
+                                  <div className="w-6 h-6 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                                    {gIdx + 1}
+                                  </div>
+                                  <div>
+                                    <h5 className="font-semibold text-white text-xs mb-1 uppercase tracking-tight">{gap.label}</h5>
+                                    <p className="text-[11px] text-gray-400 leading-relaxed">{gap.noInsight}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
+                      </div>
+
+                      {/* Right Column: Complete Scorecard & Forms */}
+                      <div className="space-y-6 mt-6 md:mt-0">
+                        {/* Complete Audit Checklist */}
+                        <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
+                          <h4 className="text-xs font-bold text-white mb-3 uppercase tracking-wider text-left border-b border-white/5 pb-2">Complete 10-Point Scorecard</h4>
+                          <div className="space-y-2.5 max-h-[180px] overflow-y-auto pr-1.5 custom-scrollbar">
+                            {BUILDER_COLS.map((col, idx) => {
+                              const isYes = checklistAnswers[idx] === true;
+                              return (
+                                <div key={col.key} className="p-2.5 bg-[#111214]/60 rounded-lg border border-white/5 text-left flex gap-2.5 items-start">
+                                  {isYes ? (
+                                    <span className="w-3.5 h-3.5 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5">✓</span>
+                                  ) : (
+                                    <span className="w-3.5 h-3.5 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5">✗</span>
+                                  )}
+                                  <div>
+                                    <p className="text-[10px] font-bold text-white mb-0.5">{idx + 1}. {col.question}</p>
+                                    <p className="text-[10px] text-gray-400 leading-relaxed">
+                                      {isYes ? col.yesInsight : col.noInsight}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Email Capture Form */}
+                        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
+                          <h4 className="text-xs font-bold text-white mb-1 leading-snug">Email My Detailed Scorecard Report</h4>
+                          <p className="text-[10px] text-gray-400 mb-3">Enter your Coordinates to get your detailed, personalized Wealth Blueprint emailed instantly.</p>
+                          
+                          {builderSubmitSuccess ? (
+                            <div className="p-4 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl text-center py-5 text-[11px] font-semibold">
+                              <CheckCircle2 className="w-8 h-8 mx-auto mb-1.5 text-green-400" />
+                              Your Scorecard Report is on its way — check your inbox within 24 hours.
+                            </div>
+                          ) : (
+                            <form onSubmit={submitBuilderForm} className="space-y-3">
+                              {builderSubmitError && (
+                                <div className="p-2 bg-red-500/10 text-red-400 border border-red-500/25 rounded-lg text-[10px] font-medium text-center">
+                                  Something went wrong. Please try again.
+                                </div>
+                              )}
+                              <div>
+                                <label className="block text-[9px] font-bold text-gray-400 mb-1 text-left uppercase tracking-wider">Full Name *</label>
+                                <input 
+                                  type="text" 
+                                  required
+                                  value={builderFormData.name}
+                                  onChange={(e) => setBuilderFormData({...builderFormData, name: e.target.value})}
+                                  className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
+                                  placeholder="John Doe"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[9px] font-bold text-gray-400 mb-1 text-left uppercase tracking-wider">Email Address *</label>
+                                <input 
+                                  type="email" 
+                                  required
+                                  value={builderFormData.email}
+                                  onChange={(e) => setBuilderFormData({...builderFormData, email: e.target.value})}
+                                  className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
+                                  placeholder="john@example.com"
+                                />
+                              </div>
+                              <button 
+                                type="submit"
+                                disabled={isSubmitting || !builderFormData.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(builderFormData.email)}
+                                className="w-full bg-[#1AABDE] hover:bg-[#158bb5] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-lg transition-colors text-xs flex items-center justify-center gap-2 animate-pulse hover:animate-none"
+                              >
+                                {isSubmitting ? 'Sending...' : 'Email My Complete Report'}
+                              </button>
+                            </form>
+                          )}
+                        </div>
+
+                        {/* Booking CTA Button */}
+                        <a 
+                          href="https://zbooking.in/I9uwM" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="w-full bg-[#111214] hover:bg-black text-white font-bold py-2.5 px-4 rounded-xl border border-white/10 transition-all text-xs text-center block shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:border-white/20 hover:scale-[1.01]"
+                        >
+                          Book your free 15-minute Thali Review Call
+                        </a>
                       </div>
                     </div>
-                    <button 
-                      type="submit" 
-                      disabled={isSubmitting}
-                      className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors mt-6 disabled:opacity-70 flex items-center justify-center gap-2"
-                    >
-                      {isSubmitting ? 'Processing...' : (modalConfig.resourceType === 'checklist' ? 'Submit & Send to my Email' : 'Unlock Presentation')}
-                    </button>
-                    <p className="text-xs text-gray-500 text-center mt-4">
-                      By downloading, you agree to receive communications from Patil Investments. We respect your privacy.
+
+                    {/* Compliance Footer */}
+                    <div className="border-t border-white/5 pt-3 text-[9px] text-gray-500 leading-relaxed text-center mt-5">
+                      Patil Investments | ARN-143723 | Mutual Fund Distributor. Mutual Fund investments are subject to market risks. Read all scheme related documents carefully before investing.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {modalConfig.resourceType === 'checklist' && (
+                      <button 
+                        onClick={() => setModalStep(1)} 
+                        className="text-sm text-gray-400 hover:text-white mb-4 flex items-center gap-1 transition-colors"
+                      >
+                        <ArrowLeft className="w-4 h-4"/> Back to Checklist
+                      </button>
+                    )}
+                    <h3 className="text-2xl font-bold mb-2">
+                      {modalConfig.resourceType === 'checklist' ? 'Where should we send your guide?' : 'Unlock Presentation'}
+                    </h3>
+                    <p className="text-gray-400 mb-6 text-sm">
+                      {modalConfig.resourceType === 'checklist' 
+                        ? "Enter your details below and we'll email your personalized guide instantly."
+                        : "Enter your details to access this interactive presentation."}
                     </p>
-                  </form>
-                </>
+                    
+                    <form onSubmit={handleLeadSubmit} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
+                          placeholder="John Doe"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                        <input 
+                          type="email" 
+                          required
+                          value={formData.email}
+                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
+                          placeholder="john@example.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
+                        <div className="flex">
+                          <span className="bg-white/5 border border-white/10 border-r-0 rounded-l-lg px-4 py-3 text-gray-400 flex items-center">
+                            +91
+                          </span>
+                          <input 
+                            type="tel" 
+                            required
+                            pattern="[0-9]{10}"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                            className="w-full bg-black/50 border border-white/10 rounded-r-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-electric-blue)] transition-colors"
+                            placeholder="9876543210"
+                          />
+                        </div>
+                      </div>
+                      <button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="w-full bg-[var(--color-electric-blue)] hover:bg-[#158bb5] text-white font-bold py-3.5 rounded-lg transition-colors mt-6 disabled:opacity-70 flex items-center justify-center gap-2"
+                      >
+                        {isSubmitting ? 'Processing...' : (modalConfig.resourceType === 'checklist' ? 'Submit & Send to my Email' : 'Unlock Presentation')}
+                      </button>
+                      <p className="text-xs text-gray-500 text-center mt-4">
+                        By downloading, you agree to receive communications from Patil Investments. We respect your privacy.
+                      </p>
+                    </form>
+                  </>
+                )
               )
             ) : (
               <div className="text-center py-8">
