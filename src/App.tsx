@@ -441,7 +441,7 @@ export default function App() {
         currentXm = 'b2458abbda540caa1a9d295d3a3001d1eaf16d21211e30cf2f3ebcaaa705aba5b061bf61143cc59f5b188131c08b0988';
       }
 
-      const fields = {
+      const fields: Record<string, any> = {
         'xnQsjsdp': currentXn,
         'xmIwtLD': currentXm,
         'actionType': 'TGVhZHM=',
@@ -454,11 +454,16 @@ export default function App() {
         'description': descriptionText, // Adding lowercase fallback to protect fields flow
       };
 
+      if (modalConfig.resourceType === 'checklist') {
+        const totalScore = Object.values(checklistAnswers).filter(v => v === true).length;
+        fields['Scorecard_Score'] = totalScore;
+      }
+
       Object.entries(fields).forEach(([k, v]) => {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = k;
-        input.value = v || '';
+        input.value = v !== undefined && v !== null ? String(v) : '';
         form.appendChild(input);
       });
 
@@ -544,7 +549,7 @@ export default function App() {
       form.target = 'zohoSubmitFrameApp';
       form.style.display = 'none';
 
-      const fields = {
+      const fields: Record<string, any> = {
         'xnQsjsdp': '0906caa662b130a61eed771b85523d4988b2db7f60fa5e0e0ed4fa255268cd46',
         'xmIwtLD': 'b9b1a55f52e5410f33d1c96c72627205c2e2b42fec52ab4d224cea8bb33584875d14f0751639693de5cc3866777d5b53',
         'actionType': 'TGVhZHM=',
@@ -553,7 +558,7 @@ export default function App() {
         'Email': builderFormData.email,
         'Lead Source': 'Website Lead Magnet - Wealth Creation', // Core required dropdown mapping
         'Lead_Source': 'Website Scorecard - Builder', // Dedicated hidden identifier field requested
-        'Scorecard_Score': totalScore.toString(), // Score state matching Zoho expectation
+        'Scorecard_Score': totalScore, // Score state matching Zoho expectation as a number
         'Description': descriptionText,
         'description': descriptionText // Lowercase protection duplicate
       };
@@ -562,7 +567,7 @@ export default function App() {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = k;
-        input.value = v || '';
+        input.value = v !== undefined && v !== null ? String(v) : '';
         form.appendChild(input);
       });
 
