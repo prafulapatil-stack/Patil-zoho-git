@@ -456,7 +456,12 @@ export default function App() {
 
       if (modalConfig.resourceType === 'checklist') {
         const totalScore = Object.values(checklistAnswers).filter(v => v === true).length;
+        console.log("handleLeadSubmit: totalScore =", totalScore, "answers:", checklistAnswers);
         fields['Scorecard_Score'] = totalScore;
+        fields['scorecard_score'] = totalScore;
+        fields['Scorecard Score'] = totalScore;
+        fields['Scorecard_score'] = totalScore;
+        fields['scorecard_Score'] = totalScore;
       }
 
       Object.entries(fields).forEach(([k, v]) => {
@@ -549,6 +554,7 @@ export default function App() {
       form.target = 'zohoSubmitFrameApp';
       form.style.display = 'none';
 
+      console.log("submitBuilderForm: totalScore =", totalScore, "answers:", checklistAnswers);
       const fields: Record<string, any> = {
         'xnQsjsdp': '0906caa662b130a61eed771b85523d4988b2db7f60fa5e0e0ed4fa255268cd46',
         'xmIwtLD': 'b9b1a55f52e5410f33d1c96c72627205c2e2b42fec52ab4d224cea8bb33584875d14f0751639693de5cc3866777d5b53',
@@ -559,6 +565,10 @@ export default function App() {
         'Lead Source': 'Website Lead Magnet - Wealth Creation', // Core required dropdown mapping
         'Lead_Source': 'Website Scorecard - Builder', // Dedicated hidden identifier field requested
         'Scorecard_Score': totalScore, // Score state matching Zoho expectation as a number
+        'scorecard_score': totalScore,
+        'Scorecard Score': totalScore,
+        'Scorecard_score': totalScore,
+        'scorecard_Score': totalScore,
         'Description': descriptionText,
         'description': descriptionText // Lowercase protection duplicate
       };
