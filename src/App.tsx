@@ -9,6 +9,7 @@ import { ArrowRight, CheckCircle2, PhoneCall, Map, TrendingUp, Download, ShieldA
 import { jsPDF } from 'jspdf';
 import { GoogleReviews } from './components/GoogleReviews';
 import Library from './presentations/Library';
+import ThaliPortfolios from './components/ThaliPortfolios';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -205,7 +206,15 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
 };
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'main' | 'library' | 'sip' | 'liver' | 'transition'>('main');
+  const [currentView, setCurrentView] = useState<'main' | 'library' | 'sip' | 'liver' | 'transition' | 'thali-portfolios'>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('/thali-portfolios')) {
+        return 'thali-portfolios';
+      }
+    }
+    return 'main';
+  });
   const [activePhase, setActivePhase] = useState(() => {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname.toLowerCase();
@@ -242,12 +251,20 @@ export default function App() {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
       
+      if (path.includes('/thali-portfolios')) {
+        setCurrentView('thali-portfolios');
+        return;
+      }
+      
       if (path.includes('/builder') || hash.includes('builder')) {
         setActivePhase(0);
+        setCurrentView('main');
       } else if (path.includes('/retirement-bridge') || hash.includes('retirement-bridge') || path.includes('/transitioner') || hash.includes('transitioner')) {
         setActivePhase(1);
+        setCurrentView('main');
       } else if (path.includes('/lifestyle-continuity') || hash.includes('lifestyle-continuity') || path.includes('/liver') || hash.includes('liver')) {
         setActivePhase(2);
+        setCurrentView('main');
       }
     };
 
@@ -260,6 +277,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (currentView === 'thali-portfolios') {
+      const currentPath = window.location.pathname.toLowerCase();
+      if (!currentPath.includes('/thali-portfolios')) {
+        window.history.pushState(null, '', '/thali-portfolios');
+      }
+      return;
+    }
     const paths = ['builder', 'retirement-bridge', 'lifestyle-continuity'];
     const currentPath = window.location.pathname.toLowerCase();
     const currentHash = window.location.hash.toLowerCase();
@@ -268,7 +292,7 @@ export default function App() {
     if (!currentPath.endsWith(`/${targetPath}`) && !currentHash.includes(targetPath)) {
       window.history.pushState(null, '', `/${targetPath}`);
     }
-  }, [activePhase]);
+  }, [activePhase, currentView]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -945,6 +969,18 @@ export default function App() {
   if (currentView === 'sip') return <Library onBack={() => setCurrentView('main')} initialView="sip" />;
   if (currentView === 'liver') return <Library onBack={() => setCurrentView('main')} initialView="liver" />;
   if (currentView === 'transition') return <Library onBack={() => setCurrentView('main')} initialView="transition" />;
+  if (currentView === 'thali-portfolios') {
+    return (
+      <ThaliPortfolios 
+        onBack={() => {
+          setCurrentView('main');
+          // Navigate back to the active phase route
+          const paths = ['builder', 'retirement-bridge', 'lifestyle-continuity'];
+          window.history.pushState(null, '', `/${paths[activePhase]}`);
+        }} 
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--color-near-black)] text-white font-sans selection:bg-[var(--color-electric-blue)] selection:text-white">
@@ -2150,15 +2186,54 @@ export default function App() {
                           )}
                         </div>
 
-                        {/* Booking CTA Button */}
-                        <a 
-                          href="https://zbooking.in/I9uwM" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="w-full bg-[#111214] hover:bg-black text-white font-bold py-2.5 px-4 rounded-xl border border-white/10 transition-all text-xs text-center block shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:border-white/20 hover:scale-[1.01]"
-                        >
-                          Book your free 15-minute Thali Review Call
-                        </a>
+                        {/* Thali Portfolios Next Step CTA */}
+                        <div className="p-4 bg-gradient-to-br from-[#1AABDE]/10 via-[#1AABDE]/5 to-transparent border border-[#1AABDE]/20 rounded-2xl relative overflow-hidden group">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-[#1AABDE]/5 rounded-full blur-xl group-hover:bg-[#1AABDE]/10 transition-all duration-500"></div>
+                          
+                          <div className="relative z-10">
+                            <span className="text-[9px] font-bold text-[#1AABDE] uppercase tracking-widest bg-[#1AABDE]/10 px-2 py-0.5 rounded-full mb-2 inline-block">
+                              Recommended Next Step
+                            </span>
+                            <h4 className="text-xs font-bold text-white mb-1 leading-snug">
+                              Explore Recommended Thali Portfolios
+                            </h4>
+                            <p className="text-[10px] text-gray-400 mb-3 leading-relaxed">
+                              See our ready-made, high-growth investment baskets tailored under the <strong>Builder's Thali</strong> model before your review call.
+                            </p>
+                            
+                            <a 
+                              href="/thali-portfolios" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentView('thali-portfolios');
+                                window.history.pushState(null, '', '/thali-portfolios');
+                                window.scrollTo({ top: 0, behavior: 'instant' });
+                              }}
+                              className="w-full bg-[#1AABDE] hover:bg-[#158bb5] text-white font-bold py-2.5 px-3 rounded-lg transition-all text-xs text-center flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(26,171,222,0.2)] cursor-pointer"
+                            >
+                              View Builder's Thali Portfolios
+                              <span className="text-xs font-normal transition-transform group-hover:translate-x-0.5">→</span>
+                            </a>
+                          </div>
+                        </div>
+
+                        {/* Booking CTA Section */}
+                        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
+                          <h4 className="text-xs font-bold text-white mb-1 leading-snug">
+                            Or Book a Live Review
+                          </h4>
+                          <p className="text-[10px] text-gray-400 mb-3 leading-relaxed">
+                            Prefer a personalized discussion? Schedule a live audit of your wealth scorecard with us.
+                          </p>
+                          <a 
+                            href="https://zbooking.in/I9uwM" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="w-full bg-[#111214] hover:bg-black text-white font-bold py-2.5 px-4 rounded-xl border border-white/10 transition-all text-xs text-center block shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:border-white/20 hover:scale-[1.01]"
+                          >
+                            Book your free 15-minute Thali Review Call
+                          </a>
+                        </div>
                       </div>
                     </div>
 
