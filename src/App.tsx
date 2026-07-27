@@ -586,8 +586,8 @@ export default function App() {
         'returnURL': 'https://patilinvestments.zohosites.in',
         'Last Name': builderFormData.name || 'Unknown',
         'Email': builderFormData.email,
-        'Lead Source': 'Website Lead Magnet - Wealth Creation', // Core required dropdown mapping
-        'Lead_Source': 'Website Scorecard - Builder', // Dedicated hidden identifier field requested
+        'Lead Source': 'Website Scorecard - Builder',
+        'Lead_Source': 'Website Scorecard - Builder',
         'Scorecard_Score': totalScore, // Score state matching Zoho expectation as a number
         'scorecard_score': totalScore,
         'Scorecard Score': totalScore,
